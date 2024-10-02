@@ -57,48 +57,48 @@ def oblicz_beben():
             return promień_gięcia * 2
 
         # Funkcja obliczająca długość kabla, jaka zmieści się na bębnie
-        def oblicz_długość_na_bębnie(bęben, średnica_kabla, długość_kabla):
+        def oblicz_dlugosc_na_bebnie(beben, srednica_kabla, dlugosc_kabla):
             warstwa = 0
-            całkowita_długość = 0
+            calkowita_dlugosc = 0
             bęben_szerokosc = bęben['szerokość']
 
             # Obliczamy długość kabla na każdej warstwie, sprawdzając, czy mamy wystarczająco dużo miejsca
-            while całkowita_długość < długość_kabla:
-                aktualna_średnica_warstwy = bęben['średnica wewnętrzna'] + warstwa * średnica_kabla * 2
+            while calkowita_dlugosc < dlugosc_kabla:
+                aktualna_średnica_warstwy = beben['średnica wewnętrzna'] + warstwa * srednica_kabla * 2
                 
                 # Sprawdź, czy możemy zmieścić kolejną warstwę
-                if aktualna_średnica_warstwy > bęben['Średnica']:
+                if aktualna_średnica_warstwy > beben['Średnica']:
                     break
                 
                 # Oblicz obwód warstwy i liczbę zwojów na warstwie
-                obwód_warstwy = math.pi * aktualna_średnica_warstwy
-                liczba_zwojów_na_warstwie = math.floor(bęben_szerokosc / średnica_kabla)
+                obwod_warstwy = math.pi * aktualna_średnica_warstwy
+                liczba_zwojów_na_warstwie = math.floor(bęben_szerokosc / srednica_kabla)
 
                 # Obliczamy długość kabla, który zmieści się na tej warstwie
-                długość_na_warstwie = liczba_zwojów_na_warstwie * obwód_warstwy / 100  # Przeliczenie na metry
-                całkowita_długość += długość_na_warstwie
+                długość_na_warstwie = liczba_zwojów_na_warstwie * obwod_warstwy / 100  # Przeliczenie na metry
+                calkowita_dlugosc += długość_na_warstwie
 
                 # Przejdź do kolejnej warstwy
                 warstwa += 1
             
-            return całkowita_długość
+            return calkowita_dlugosc
 
         # Sprawdzamy od najmniejszego bębna
-        def wybierz_bęben(średnica_kabla, promień_gięcia, długość_kabla, bębny_df):
-            minimalna_wewnętrzna = minimalna_średnica_wewnętrzna(promień_gięcia)
-            for index, bęben in bębny_df.iterrows():
-                if bęben['średnica wewnętrzna'] >= minimalna_wewnętrzna:
-                    całkowita_długość = oblicz_długość_na_bębnie(bęben, średnica_kabla, długość_kabla)
-                    if całkowita_długość >= dlugosc_kabla:
+        def wybierz_beben(srednica_kabla, promien_giecia, dlugosc_kabla, bebny_df):
+            minimalna_wewnetrzna = minimalna_średnica_wewnętrzna(promien_giecia)
+            for index, beben in bebny_df.iterrows():
+                if beben['średnica wewnętrzna'] >= minimalna_wewnetrzna:
+                    calkowita_dlugosc = oblicz_dlugosc_na_bebnie(beben, srednica_kabla, dlugosc_kabla)
+                    if calkowita_dlugosc >= dlugosc_kabla:
                         masa_kabla = (dlugosc_kabla / 1000) * masa_kabla_na_km
-                        masa_bębna = bęben['Waga']
+                        masa_bębna = beben['Waga']
                         suma_wag = masa_kabla + masa_bębna
-                        return bęben, masa_kabla, masa_bębna, suma_wag
+                        return beben, masa_kabla, masa_bębna, suma_wag
             return None, None, None, None
 
         # Zaczynamy od mniejszego bębna i sprawdzamy
         możliwe_bębny = bębny_df.sort_values(by='Średnica')  # Sortujemy od najmniejszego
-        odpowiedni_bęben, masa_kabla, masa_bębna, suma_wag = wybierz_bęben(średnica_kabla, promień_gięcia, dlugosc_kabla, możliwe_bębny)
+        odpowiedni_bęben, masa_kabla, masa_bębna, suma_wag = wybierz_beben(średnica_kabla, promień_gięcia, dlugosc_kabla, możliwe_bębny)
 
         if odpowiedni_bęben is not None:
             wynik = (f"Najlepszy bęben: {odpowiedni_bęben['Średnica']} cm, szerokość {odpowiedni_bęben['szerokość']} cm, "
