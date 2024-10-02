@@ -98,7 +98,7 @@ def oblicz_beben():
 
         # Zaczynamy od mniejszego bębna i sprawdzamy
         możliwe_bębny = bębny_df.sort_values(by='Średnica')  # Sortujemy od najmniejszego
-        odpowiedni_bęben, masa_kabla, masa_bębna, suma_wag = wybierz_beben(średnica_kabla, promień_gięcia, dlugosc_kabla, możliwe_bębny)
+        odpowiedni_bęben, masa_kabla, masa_bębna, suma_wag = wybierz_beben(srednica_kabla, promień_gięcia, dlugosc_kabla, możliwe_bębny)
 
         if odpowiedni_bęben is not None:
             wynik = (f"Najlepszy bęben: {odpowiedni_bęben['Średnica']} cm, szerokość {odpowiedni_bęben['szerokość']} cm, "
