@@ -56,18 +56,26 @@ def oblicz_beben():
         def minimalna_średnica_wewnętrzna(promień_gięcia):
             return promień_gięcia * 2
 
+        # Funkcja obliczająca długość kabla, jaka zmieści się na bębnie
         def oblicz_długość_na_bębnie(bęben, średnica_kabla, długość_kabla):
             warstwa = 0
             całkowita_długość = 0
             bęben_szerokosc = bęben['szerokość']
 
-            while całkowita_długość < długość_kabla and (bęben['średnica wewnętrzna'] + warstwa * średnica_kabla * 2) <= bęben['Średnica']:
+            # Obliczamy długość kabla na każdej warstwie
+            while całkowita_długość < długość_kabla:
                 aktualna_średnica_warstwy = bęben['średnica wewnętrzna'] + warstwa * średnica_kabla * 2
+                
+                # Jeśli przekroczy maksymalną średnicę bębna, przerywamy
+                if aktualna_średnica_warstwy > bęben['Średnica']:
+                    break
+                
                 obwód_warstwy = math.pi * aktualna_średnica_warstwy
                 liczba_zwojów_na_warstwie = math.floor(bęben_szerokosc / średnica_kabla)
                 długość_na_warstwie = liczba_zwojów_na_warstwie * obwód_warstwy / 100  # Przeliczenie na metry
                 całkowita_długość += długość_na_warstwie
                 warstwa += 1
+            
             return całkowita_długość
 
         def wybierz_bęben(średnica_kabla, promień_gięcia, długość_kabla, bębny_df):
