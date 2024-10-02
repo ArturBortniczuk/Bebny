@@ -57,7 +57,7 @@ def oblicz_beben():
             return promień_gięcia * 2
 
         # Funkcja obliczająca długość kabla, jaka zmieści się na bębnie
-        def oblicz_dlugosc_na_bebnie(beben, srednica_kabla, dlugosc_kabla):
+        def oblicz_dlugosc_na_bebnie(bęben, srednica_kabla, dlugosc_kabla):
             warstwa = 0
             calkowita_dlugosc = 0
             bęben_szerokosc = bęben['szerokość']
