@@ -44,7 +44,7 @@ def oblicz_beben():
         return render_template('index.html', wynik="Nie znaleziono kabla o podanych parametrach.", opcje_kabli=get_kable_options())
     else:
         # Pobieranie parametrów dla wybranego kabla
-        średnica_kabla = wybrany_kabel['średnica zewnętrzna kabla'].values[0] / 10  # Przeliczamy z mm na cm
+        srednica_kabla = wybrany_kabel['średnica zewnętrzna kabla'].values[0] / 10  # Przeliczamy z mm na cm
         promień_gięcia = wybrany_kabel['promień gięcia'].values[0] / 10  # Przeliczamy z mm na cm
 
         # Zmniejszenie promienia gięcia o 5 cm, jeśli długość kabla < 400 metrów
@@ -57,10 +57,10 @@ def oblicz_beben():
             return promień_gięcia * 2
 
         # Funkcja obliczająca długość kabla, jaka zmieści się na bębnie
-        def oblicz_dlugosc_na_bebnie(bęben, srednica_kabla, dlugosc_kabla):
+        def oblicz_dlugosc_na_bebnie(beben, srednica_kabla, dlugosc_kabla):
             warstwa = 0
             calkowita_dlugosc = 0
-            bęben_szerokosc = bęben['szerokość']
+            bęben_szerokosc = beben['szerokość']  # Prawidłowe przypisanie szerokości bębna
 
             # Obliczamy długość kabla na każdej warstwie, sprawdzając, czy mamy wystarczająco dużo miejsca
             while calkowita_dlugosc < dlugosc_kabla:
