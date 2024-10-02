@@ -8,10 +8,10 @@ app = Flask(__name__)
 # Pobierz ścieżkę do katalogu, w którym znajduje się plik app.py
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Relatywna ścieżka do pliku Excel
+# Relatywna ścieżka do pliku Excel (który znajduje się w tym samym katalogu co app.py)
 file_path = os.path.join(BASE_DIR, 'wszystkiekable.xlsx')
 
-# Załaduj dane z pliku Excel
+# Załaduj dane z pliku Excel (dwa arkusze)
 kable_df = pd.read_excel(file_path, sheet_name='Kable')
 bębny_df = pd.read_excel(file_path, sheet_name='Wymiary')
 
