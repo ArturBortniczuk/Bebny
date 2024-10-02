@@ -1,13 +1,17 @@
 from flask import Flask, render_template, request
 import pandas as pd
 import math
+import os
 
 app = Flask(__name__)
 
-# Ścieżka do pliku Excel
-file_path = 'C:/Users/Dell/Desktop/bęben/wszystkiekable.xlsx'
+# Pobierz ścieżkę do katalogu, w którym znajduje się plik app.py
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Załaduj dane z odpowiednich arkuszy
+# Relatywna ścieżka do pliku Excel
+file_path = os.path.join(BASE_DIR, 'wszystkiekable.xlsx')
+
+# Załaduj dane z pliku Excel
 kable_df = pd.read_excel(file_path, sheet_name='Kable')
 bębny_df = pd.read_excel(file_path, sheet_name='Wymiary')
 
