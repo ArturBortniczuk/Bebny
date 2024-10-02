@@ -8,10 +8,10 @@ app = Flask(__name__)
 # Pobierz ścieżkę do katalogu, w którym znajduje się plik app.py
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Relatywna ścieżka do pliku Excel (który znajduje się w tym samym katalogu co app.py)
+# Relatywna ścieżka do pliku Excel
 file_path = os.path.join(BASE_DIR, 'wszystkiekable.xlsx')
 
-# Załaduj dane z pliku Excel (dwa arkusze)
+# Załaduj dane z pliku Excel
 kable_df = pd.read_excel(file_path, sheet_name='Kable')
 bębny_df = pd.read_excel(file_path, sheet_name='Wymiary')
 
@@ -46,6 +46,11 @@ def oblicz_beben():
         # Pobieranie parametrów dla wybranego kabla
         średnica_kabla = wybrany_kabel['średnica zewnętrzna kabla'].values[0] / 10  # Przeliczamy z mm na cm
         promień_gięcia = wybrany_kabel['promień gięcia'].values[0] / 10  # Przeliczamy z mm na cm
+
+        # Zmniejszenie promienia gięcia o 5 cm, jeśli długość kabla < 400 metrów
+        if dlugosc_kabla < 400:
+            promień_gięcia -= 5
+
         masa_kabla_na_km = wybrany_kabel['Masa kg/km'].values[0]  # Masa kabla na km
 
         def minimalna_średnica_wewnętrzna(promień_gięcia):
@@ -54,12 +59,13 @@ def oblicz_beben():
         def oblicz_długość_na_bębnie(bęben, średnica_kabla, długość_kabla):
             warstwa = 0
             całkowita_długość = 0
+            bęben_szerokosc = bęben['szerokość']
 
             while całkowita_długość < długość_kabla and (bęben['średnica wewnętrzna'] + warstwa * średnica_kabla * 2) <= bęben['Średnica']:
                 aktualna_średnica_warstwy = bęben['średnica wewnętrzna'] + warstwa * średnica_kabla * 2
                 obwód_warstwy = math.pi * aktualna_średnica_warstwy
-                liczba_zwojów_na_warstwie = math.floor(bęben['szerokość'] / średnica_kabla)
-                długość_na_warstwie = liczba_zwojów_na_warstwie * obwód_warstwy / 100
+                liczba_zwojów_na_warstwie = math.floor(bęben_szerokosc / średnica_kabla)
+                długość_na_warstwie = liczba_zwojów_na_warstwie * obwód_warstwy / 100  # Przeliczenie na metry
                 całkowita_długość += długość_na_warstwie
                 warstwa += 1
             return całkowita_długość
