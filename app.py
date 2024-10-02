@@ -62,18 +62,23 @@ def oblicz_beben():
             całkowita_długość = 0
             bęben_szerokosc = bęben['szerokość']
 
-            # Obliczamy długość kabla na każdej warstwie
+            # Obliczamy długość kabla na każdej warstwie, sprawdzając, czy mamy wystarczająco dużo miejsca
             while całkowita_długość < długość_kabla:
                 aktualna_średnica_warstwy = bęben['średnica wewnętrzna'] + warstwa * średnica_kabla * 2
                 
-                # Jeśli przekroczy maksymalną średnicę bębna, przerywamy
+                # Sprawdź, czy możemy zmieścić kolejną warstwę
                 if aktualna_średnica_warstwy > bęben['Średnica']:
                     break
                 
+                # Oblicz obwód warstwy i liczbę zwojów na warstwie
                 obwód_warstwy = math.pi * aktualna_średnica_warstwy
                 liczba_zwojów_na_warstwie = math.floor(bęben_szerokosc / średnica_kabla)
+
+                # Obliczamy długość kabla, który zmieści się na tej warstwie
                 długość_na_warstwie = liczba_zwojów_na_warstwie * obwód_warstwy / 100  # Przeliczenie na metry
                 całkowita_długość += długość_na_warstwie
+
+                # Przejdź do kolejnej warstwy
                 warstwa += 1
             
             return całkowita_długość
