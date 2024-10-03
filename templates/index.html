@@ -66,7 +66,6 @@
             padding: 15px;
             border-radius: 5px;
             border: 1px solid #ccc;
-            display: none; /* Ukryj wynik na początku */
         }
 
         .result p {
@@ -119,27 +118,18 @@
             <label for="dlugosc_kabla">Długość kabla (w metrach):</label>
             <input type="number" id="dlugosc_kabla" name="dlugosc_kabla" required>
             
-            <input type="submit" value="Pokaż wynik">
+            <input type="submit" value="Oblicz bęben">
         </form>
 
         <h2>Wynik:</h2>
-        <div class="result" id="result">
+        <div class="result">
             {% if wynik %}
-                <p>Średnica zewnętrzna bębna: {{ wynik['średnica_bębna'] }} cm</p>
-                <p>Łączna masa: {{ wynik['łącznie_masa'] }} kg</p>
+                <p>{{ wynik|safe }}</p>
+            {% else %}
+                <p>Wprowadź dane i kliknij "Oblicz bęben", aby zobaczyć wynik.</p>
             {% endif %}
         </div>
     </div>
-
-    <script>
-        // Po wczytaniu strony, jeśli są wyniki, pokazuje je
-        document.addEventListener('DOMContentLoaded', function() {
-            var resultDiv = document.getElementById("result");
-            {% if wynik %}
-                resultDiv.style.display = 'block'; // Pokazuje wyniki
-            {% endif %}
-        });
-    </script>
 
 </body>
 </html>
