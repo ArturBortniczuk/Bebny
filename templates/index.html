@@ -66,7 +66,7 @@
             padding: 15px;
             border-radius: 5px;
             border: 1px solid #ccc;
-            white-space: pre-line; /* Zachowuje formatowanie białych znaków */
+            display: none; /* Ukryj wynik na początku */
         }
 
         .result p {
@@ -123,7 +123,7 @@
         </form>
 
         <h2>Wynik:</h2>
-        <div class="result">
+        <div class="result" id="result">
             {% if wynik %}
                 <p>Średnica zewnętrzna bębna: {{ wynik['średnica_bębna'] }} cm</p>
                 <p>Łączna masa: {{ wynik['łącznie_masa'] }} kg</p>
@@ -132,6 +132,16 @@
             {% endif %}
         </div>
     </div>
+
+    <script>
+        // Po wczytaniu strony, jeśli są wyniki, pokazuje je
+        document.addEventListener('DOMContentLoaded', function() {
+            var resultDiv = document.getElementById("result");
+            {% if wynik %}
+                resultDiv.style.display = 'block';
+            {% endif %}
+        });
+    </script>
 
 </body>
 </html>
