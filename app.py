@@ -67,7 +67,7 @@ def oblicz_beben():
                 aktualna_średnica_warstwy = beben['średnica wewnętrzna'] + warstwa * srednica_kabla * 2
                 
                 # Sprawdź, czy możemy zmieścić kolejną warstwę
-                if aktualna_średnica_warstwy > beben['Średnica']:
+                if aktualna_średnica_warstwy > beben['Średnica'] - 10:  # Użycie średnicy bębna pomniejszonej o 10 cm
                     break
                 
                 # Oblicz obwód warstwy i liczbę zwojów na warstwie
