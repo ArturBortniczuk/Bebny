@@ -66,6 +66,7 @@
             padding: 15px;
             border-radius: 5px;
             border: 1px solid #ccc;
+            white-space: pre-line; /* Zachowuje formatowanie białych znaków */
         }
 
         .result p {
@@ -118,15 +119,16 @@
             <label for="dlugosc_kabla">Długość kabla (w metrach):</label>
             <input type="number" id="dlugosc_kabla" name="dlugosc_kabla" required>
             
-            <input type="submit" value="Oblicz bęben">
+            <input type="submit" value="Pokaż wynik">
         </form>
 
         <h2>Wynik:</h2>
         <div class="result">
             {% if wynik %}
-                <p>{{ wynik|safe }}</p>
+                <p>Średnica zewnętrzna bębna: {{ wynik['średnica_bębna'] }} cm</p>
+                <p>Łączna masa: {{ wynik['łącznie_masa'] }} kg</p>
             {% else %}
-                <p>Wprowadź dane i kliknij "Oblicz bęben", aby zobaczyć wynik.</p>
+                <p>Wprowadź dane i kliknij "Pokaż wynik", aby zobaczyć wynik.</p>
             {% endif %}
         </div>
     </div>
