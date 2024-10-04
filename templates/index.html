@@ -12,6 +12,7 @@
 
         .container {
             padding: 2rem;
+            max-width: 600px;
         }
 
         select, input[type="number"] {
@@ -19,15 +20,17 @@
         }
 
         .result {
-            background-color: #e9ecef;
+            background-color: #fff;
+            color: #333;
             padding: 1.5rem;
-            border-radius: 5px;
-            border: 1px solid #ccc;
+            border-radius: 8px;
+            border: 2px solid #28a745;
+            font-size: 1.2rem;
+            text-align: center;
         }
 
         .result p {
             margin: 0;
-            font-size: 1.2rem;
         }
 
         input[type="submit"] {
@@ -65,17 +68,6 @@
 </head>
 <body>
 
-<nav class="container-fluid">
-    <ul>
-        <li><strong>Kalkulator Bębnów Kablowych</strong></li>
-    </ul>
-    <ul>
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Obliczenia</a></li>
-        <li><a href="#" role="button">Kontakt</a></li>
-    </ul>
-</nav>
-
 <main class="container">
     <h1>Kalkulator Bębnów Kablowych</h1>
     <form action="/oblicz" method="POST">
@@ -107,10 +99,6 @@
         {% endif %}
     </div>
 </main>
-
-<footer class="container">
-    <small><a href="#">Polityka prywatności</a> • <a href="#">Warunki użytkowania</a></small>
-</footer>
 
 </body>
 </html>
