@@ -4,73 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kalkulator Bębnów Kablowych</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
+        h1, h2 {
+            text-align: center;
         }
 
         .container {
-            max-width: 800px;
-            margin: 50px auto;
-            background-color: #fff;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-
-        label {
-            font-weight: bold;
-            display: block;
-            margin: 10px 0 5px;
+            padding: 2rem;
         }
 
         select, input[type="number"] {
-            width: 100%;
-            padding: 10px;
-            margin: 5px 0 20px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        input[type="submit"] {
-            width: 100%;
-            background-color: #28a745;
-            color: white;
-            padding: 14px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #218838;
-        }
-
-        h2 {
-            margin-top: 40px;
-            color: #333;
+            margin-bottom: 1.5rem;
         }
 
         .result {
             background-color: #e9ecef;
-            padding: 15px;
+            padding: 1.5rem;
             border-radius: 5px;
             border: 1px solid #ccc;
         }
 
         .result p {
             margin: 0;
-            font-size: 18px;
+            font-size: 1.2rem;
+        }
+
+        input[type="submit"] {
+            background-color: #28a745;
+            color: white;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #218838;
         }
     </style>
     <script>
@@ -99,37 +65,52 @@
 </head>
 <body>
 
-    <div class="container">
-        <h1>Kalkulator Bębnów Kablowych</h1>
-        <form action="/oblicz" method="POST">
-            <label for="nazwa_kabla">Typ kabla:</label>
-            <select id="nazwa_kabla" name="nazwa_kabla" onchange="updatePrzekrojZylOptions()" required>
-                <option value="">-- Wybierz typ kabla --</option>
-                {% for kabel in opcje_kabli %}
-                    <option value="{{ kabel }}">{{ kabel }}</option>
-                {% endfor %}
-            </select>
-            
-            <label for="liczba_przekroj">Liczba i przekrój żył:</label>
-            <select id="liczba_przekroj" name="liczba_przekroj" required>
-                <option value="">-- Najpierw wybierz typ kabla --</option>
-            </select>
-            
-            <label for="dlugosc_kabla">Długość kabla (w metrach):</label>
-            <input type="number" id="dlugosc_kabla" name="dlugosc_kabla" required>
-            
-            <input type="submit" value="Oblicz bęben">
-        </form>
+<nav class="container-fluid">
+    <ul>
+        <li><strong>Kalkulator Bębnów Kablowych</strong></li>
+    </ul>
+    <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Obliczenia</a></li>
+        <li><a href="#" role="button">Kontakt</a></li>
+    </ul>
+</nav>
 
-        <h2>Wynik:</h2>
-        <div class="result">
-            {% if wynik %}
-                <p>{{ wynik|safe }}</p>
-            {% else %}
-                <p>Wprowadź dane i kliknij "Oblicz bęben", aby zobaczyć wynik.</p>
-            {% endif %}
-        </div>
+<main class="container">
+    <h1>Kalkulator Bębnów Kablowych</h1>
+    <form action="/oblicz" method="POST">
+        <label for="nazwa_kabla">Typ kabla:</label>
+        <select id="nazwa_kabla" name="nazwa_kabla" onchange="updatePrzekrojZylOptions()" required>
+            <option value="">-- Wybierz typ kabla --</option>
+            {% for kabel in opcje_kabli %}
+                <option value="{{ kabel }}">{{ kabel }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="liczba_przekroj">Liczba i przekrój żył:</label>
+        <select id="liczba_przekroj" name="liczba_przekroj" required>
+            <option value="">-- Najpierw wybierz typ kabla --</option>
+        </select>
+
+        <label for="dlugosc_kabla">Długość kabla (w metrach):</label>
+        <input type="number" id="dlugosc_kabla" name="dlugosc_kabla" required>
+
+        <input type="submit" value="Oblicz bęben">
+    </form>
+
+    <h2>Wynik:</h2>
+    <div class="result">
+        {% if wynik %}
+            <p>{{ wynik|safe }}</p>
+        {% else %}
+            <p>Wprowadź dane i kliknij "Oblicz bęben", aby zobaczyć wynik.</p>
+        {% endif %}
     </div>
+</main>
+
+<footer class="container">
+    <small><a href="#">Polityka prywatności</a> • <a href="#">Warunki użytkowania</a></small>
+</footer>
 
 </body>
 </html>
