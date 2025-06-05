@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wyniki Kalkulacji - Kalkulator Bębnów</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --success-color: #059669;
+            --warning-color: #d97706;
+            --danger-color: #dc2626;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        body {
+            background: var(--gradient);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.1) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .navbar-brand, .nav-link {
+            color: white !important;
+            font-weight: 600;
+        }
+
+        .result-card {
+            padding: 30px;
+            margin-bottom: 20px;
+            color: white;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .result-header {
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--success-color);
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .comparison-table {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .table-dark {
+            --bs-table-bg: transparent;
+            --bs-table-border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .table-dark th {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-weight: 600;
+        }
+
+        .table-dark td {
+            border-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .table-row-best {
+            background: rgba(5, 150, 105, 0.2) !important;
+            border-left: 4px solid var(--success-color);
+        }
+
+        .visualization-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .btn-action {
+            background: linear-gradient(45deg, var(--primary-color), #3b82f6);
+            border: none;
+            border-radius: 50px;
+            padding: 12px 25px;
+            color: white;
+            font-weight: 600;
+            margin: 5px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+            color: white;
+        }
+
+        .btn-success-custom {
+            background: linear-gradient(45deg, var(--success-color), #10b981);
+        }
+
+        .btn-warning-custom {
+            background: linear-gradient(45deg, var(--warning-color), #f59e0b);
+        }
+
+        .efficiency-bar {
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .efficiency-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success-color), #10b981);
+            border-radius: 10px;
+            transition: width 0.8s ease;
+        }
+
+        .cable-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .alert-success-custom {
+            background: rgba(5, 150, 105, 0.1);
+            border: 1px solid rgba(5, 150, 105, 0.3);
+            color: white;
+            border-radius: 15px;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .badge-custom {
+            background: var(--success-color);
+            color: white;
+            border-radius: 20px;
+            padding: 8px 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .result-card {
+                padding: 20px;
+            }
+            
+            .metric-value {
+                font-size: 1.5rem;
+            }
+            
+            .btn-action {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-calculator me-2"></i>
+                Kalkulator Bębnów
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/">
+                    <i class="fas fa-arrow-left me-1"></i>
+                    Powrót do kalkulatora
+                </a>
+                <a class="nav-link" href="/history">
+                    <i class="fas fa-history me-1"></i>
+                    Historia
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" style="margin-top: 100px; margin-bottom: 50px;">
+        <!-- Alert sukcesu -->
+        <div class="alert alert-success-custom d-flex align-items-center" role="alert">
+            <i class="fas fa-check-circle fa-2x me-3"></i>
+            <div>
+                <h5 class="mb-1">Obliczenia zakończone pomyślnie!</h5>
+                <p class="mb-0">Znaleziono odpowiedni bęben dla Twojego kabla.</p>
+            </div>
+        </div>
+
+        <!-- Informacje o kablu -->
+        <div class="glass-effect result-card">
+            <div class="result-header">
+                <h2><i class="fas fa-plug me-2"></i>Dane kabla</h2>
+            </div>
+            
+            <div class="cable-info-grid">
+                <div class="metric-card">
+                    <div class="metric-value">{{ cable_info.nazwa }}</div>
+                    <div class="metric-label">Typ kabla</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-value">{{ cable_info.przekroj }}</div>
+                    <div class="metric-label">Przekrój żył</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-value">{{ cable_info.dlugosc }} m</div>
+                    <div class="metric-label">Długość kabla</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Zalecany bęben -->
+            <div class="col-lg-8">
+                <div class="glass-effect result-card">
+                    <div class="result-header d-flex justify-content-between align-items-center">
+                        <h2><i class="fas fa-drum me-2"></i>Zalecany bęben</h2>
+                        <span class="badge-custom">NAJLEPSZY WYBÓR</span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="metric-card">
+                                <div class="metric-value">{{ najlepszy_beben.beben.Średnica }} cm</div>
+                                <div class="metric-label">Średnica</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="metric-card">
+                                <div class="metric-value">{{ najlepszy_beben.beben.szerokość }} cm</div>
+                                <div class="metric-label">Szerokość</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="metric-card">
+                                <div class="metric-value">{{ najlepszy_beben.beben['średnica wewnętrzna'] }} cm</div>
+                                <div class="metric-label">Śr. wewnętrzna</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="metric-card">
+                                <div class="metric-value">{{ najlepszy_beben.liczba_warstw }}</div>
+                                <div class="metric-label">Liczba warstw</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Wykorzystanie bębna -->
+                    <div class="mt-4">
+                        <h5>Wykorzystanie bębna: {{ "%.1f"|format(najlepszy_beben.wykorzystanie_procent) }}%</h5>
+                        <div class="efficiency-bar">
+                            <div class="efficiency-fill" style="width: {{ najlepszy_beben.wykorzystanie_procent }}%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Informacje o masie -->
+                    <div class="row mt-4">
+                        <div class="col-md-4">
+                            <div class="metric-card">
+                                <div class="metric-value">{{ "%.1f"|format(najlepszy_beben.masa_kabla) }} kg</div>
+                                <div class="metric-label">Masa kabla</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="metric-card">
+                                <div class="metric-value">{{ najlepszy_beben.masa_bębna }} kg</div>
+                                <div class="metric-label">Masa bębna</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="metric-card">
+                                <div class="metric-value">{{ "%.1f"|format(najlepszy_beben.suma_wag) }} kg</div>
+                                <div class="metric-label">Łączna masa</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wizualizacja -->
+            <div class="col-lg-4">
+                {% if visualization %}
+                <div class="visualization-container">
+                    <h4 class="text-dark mb-3">Wizualizacja bębna</h4>
+                    <img src="data:image/png;base64,{{ visualization }}" 
+                         alt="Wizualizacja bębna" 
+                         class="img-fluid"
+                         style="max-width: 100%; height: auto;">
+                </div>
+                {% endif %}
+
+                <!-- Akcje -->
+                <div class="glass-effect" style="padding: 20px;">
+                    <h5 class="text-white mb-3">Akcje</h5>
+                    <a href="#" class="btn btn-action btn-success-custom" onclick="downloadPDF()">
+                        <i class="fas fa-file-pdf me-2"></i>
+                        Pobierz PDF
+                    </a>
+                    <a href="/" class="btn btn-action">
+                        <i class="fas fa-calculator me-2"></i>
+                        Nowe obliczenie
+                    </a>
+                    <a href="#" class="btn btn-action btn-warning-custom" onclick="shareResults()">
+                        <i class="fas fa-share me-2"></i>
+                        Udostępnij
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Porównanie z innymi bębnami -->
+        {% if wszystkie_bebny|length > 1 %}
+        <div class="glass-effect result-card">
+            <div class="result-header">
+                <h3><i class="fas fa-balance-scale me-2"></i>Porównanie z innymi opcjami</h3>
+                <p class="mb-0 opacity-75">Top 5 najlepszych bębnów dla Twojego kabla</p>
+            </div>
+
+            <div class="comparison-table">
+                <table class="table table-dark table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Średnica</th>
+                            <th>Szerokość</th>
+                            <th>Masa bębna</th>
+                            <th>Łączna masa</th>
+                            <th>Wykorzystanie</th>
+                            <th>Warstwy</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for beben in wszystkie_bebny %}
+                        <tr class="{% if loop.index0 == 0 %}table-row-best{% endif %}">
+                            <td>
+                                {% if loop.index0 == 0 %}
+                                    <i class="fas fa-crown me-2 text-warning"></i>
+                                {% endif %}
+                                {{ beben.beben.Średnica }} cm
+                            </td>
+                            <td>{{ beben.beben.szerokość }} cm</td>
+                            <td>{{ beben.masa_bębna }} kg</td>
+                            <td>{{ "%.1f"|format(beben.suma_wag) }} kg</td>
+                            <td>
+                                {{ "%.1f"|format(beben.wykorzystanie_procent) }}%
+                                <div class="efficiency-bar" style="height: 8px; margin-top: 5px;">
+                                    <div class="efficiency-fill" style="width: {{ beben.wykorzystanie_procent }}%; height: 100%;"></div>
+                                </div>
+                            </td>
+                            <td>{{ beben.liczba_warstw }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function downloadPDF() {
+            // Implementacja pobierania PDF
+            fetch('/download-pdf', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    cable_info: {{ cable_info|tojson }},
+                    result: {{ najlepszy_beben|tojson }}
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.blob();
+                } else {
+                    throw new Error('Błąd generowania PDF');
+                }
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'raport_beben_' + new Date().toISOString().split('T')[0] + '.pdf';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+                alert('Funkcja PDF jest w przygotowaniu!');
+                console.error('Error:', error);
+            });
+        }
+
+        function shareResults() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Wyniki kalkulacji bębna kablowego',
+                    text: `Zalecany bęben: ${{"%.0f"|format(najlepszy_beben.beben.Średnica)}}cm dla kabla {{ cable_info.dlugosc }}m`,
+                    url: window.location.href
+                });
+            } else {
+                // Fallback - kopiuj link do schowka
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    alert('Link został skopiowany do schowka!');
+                });
+            }
+        }
+
+        // Animacje przy ładowaniu strony
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animuj karty metryk
+            const metricCards = document.querySelectorAll('.metric-card');
+            metricCards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.animation = 'slideInRight 0.6s ease-out';
+                }, index * 100);
+            });
+
+            // Animuj pasek wykorzystania
+            setTimeout(() => {
+                const efficiencyBars = document.querySelectorAll('.efficiency-fill');
+                efficiencyBars.forEach(bar => {
+                    const width = bar.style.width;
+                    bar.style.width = '0%';
+                    setTimeout(() => {
+                        bar.style.width = width;
+                    }, 500);
+                });
+            }, 1000);
+
+            // Dodaj tooltips do tabeli
+            const tableRows = document.querySelectorAll('tbody tr');
+            tableRows.forEach((row, index) => {
+                if (index === 0) {
+                    row.setAttribute('title', 'Najlepszy wybór - optymalna kombinacja parametrów');
+                }
+            });
+        });
+
+        // Print function
+        function printResults() {
+            window.print();
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl + P = print
+            if (e.ctrlKey && e.key === 'p') {
+                e.preventDefault();
+                printResults();
+            }
+            
+            // Ctrl + S = download PDF
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                downloadPDF();
+            }
+            
+            // Escape = back to calculator
+            if (e.key === 'Escape') {
+                window.location.href = '/';
+            }
+        });
+
+        // Auto-scroll do najważniejszych wyników
+        setTimeout(() => {
+            const resultCard = document.querySelector('.result-card');
+            if (resultCard) {
+                resultCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 500);
+    </script>
+</body>
+</html>
