@@ -251,28 +251,7 @@ def oblicz_beben():
         # Najlepszy bęben (pierwszy z posortowanej listy)
         najlepszy_beben = odpowiednie_bebny[0]
         
-        # Zapisz historię
-        calculation_data = {
-            'nazwa_kabla': nazwa_kabla,
-            'przekroj': liczba_przekroj,
-            'dlugosc': dlugosc_kabla,
-            'wynik': {
-                'beben': {
-                    'Średnica': najlepszy_beben['beben']['Średnica'],
-                    'szerokość': najlepszy_beben['beben']['szerokość'],
-                    'średnica wewnętrzna': najlepszy_beben['beben']['średnica wewnętrzna'],
-                    'Waga': najlepszy_beben['beben'].get('Waga', 0)
-                },
-                'masa_kabla': najlepszy_beben['masa_kabla'],
-                'masa_bębna': najlepszy_beben['masa_bębna'],
-                'suma_wag': najlepszy_beben['suma_wag'],
-                'wykorzystanie_procent': najlepszy_beben['wykorzystanie_procent'],
-                'liczba_warstw': najlepszy_beben['liczba_warstw']
-            }
-        }
-        save_calculation_history(calculation_data)
-        
-        # Przekaż dane do template jako strukturę
+        # Przekaż dane do template jako strukturę (bez zapisywania historii na serwerze)
         return render_template('index.html',
                              wynik_data={
                                  'nazwa_kabla': nazwa_kabla,
@@ -281,6 +260,24 @@ def oblicz_beben():
                                  'srednica_bebna': najlepszy_beben['beben']['Średnica'],
                                  'laczna_masa': najlepszy_beben['suma_wag'],
                                  'szczegoly': najlepszy_beben
+                             },
+                             save_to_history={
+                                 'nazwa_kabla': nazwa_kabla,
+                                 'przekroj': liczba_przekroj,
+                                 'dlugosc': dlugosc_kabla,
+                                 'wynik': {
+                                     'beben': {
+                                         'Średnica': najlepszy_beben['beben']['Średnica'],
+                                         'szerokość': najlepszy_beben['beben']['szerokość'],
+                                         'średnica wewnętrzna': najlepszy_beben['beben']['średnica wewnętrzna'],
+                                         'Waga': najlepszy_beben['beben'].get('Waga', 0)
+                                     },
+                                     'masa_kabla': najlepszy_beben['masa_kabla'],
+                                     'masa_bębna': najlepszy_beben['masa_bębna'],
+                                     'suma_wag': najlepszy_beben['suma_wag'],
+                                     'wykorzystanie_procent': najlepszy_beben['wykorzystanie_procent'],
+                                     'liczba_warstw': najlepszy_beben['liczba_warstw']
+                                 }
                              },
                              opcje_kabli=get_kable_options())
                              
@@ -292,19 +289,9 @@ def oblicz_beben():
 
 @app.route('/history')
 def history():
-    """Wyświetla historię obliczeń"""
-    try:
-        history_file = os.path.join(BASE_DIR, 'calculation_history.json')
-        if os.path.exists(history_file):
-            with open(history_file, 'r', encoding='utf-8') as f:
-                history_data = json.load(f)
-        else:
-            history_data = []
-        
-        return render_template('history.html', history=history_data[-20:])  # Ostatnie 20
-    except Exception as e:
-        logging.error(f"Błąd ładowania historii: {e}")
-        return render_template('error.html', error="Błąd ładowania historii")
+    """Wyświetla historię obliczeń z localStorage"""
+    # Historia będzie ładowana z localStorage po stronie klienta
+    return render_template('history.html')
 
 @app.errorhandler(404)
 def not_found(error):
