@@ -1,30 +1,15 @@
-from flask import Flask, render_template, request, jsonify, send_file
-import pandas as pd
+from flask import Flask, render_template, request, jsonify
+import openpyxl
 import math
 import os
 import json
 import logging
 from datetime import datetime
-from io import BytesIO
-import base64
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-from reportlab.lib.pagesizes import letter, A4
-from reportlab.pdfgen import canvas
-from reportlab.lib.units import cm
 
 app = Flask(__name__)
 
 # Konfiguracja logowania
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('kalkulator.log'),
-        logging.StreamHandler()
-    ]
-)
+logging.basicConfig(level=logging.INFO)
 
 # Cache dla danych Excel
 excel_data_cache = {}
@@ -34,28 +19,57 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(BASE_DIR, 'wszystkiekable.xlsx')
 
 def load_excel_data():
-    """Ładuje dane z pliku Excel z cache'owaniem"""
+    """Ładuje dane z pliku Excel z cache'owaniem (bez pandas)"""
     global excel_data_cache
     
     if not excel_data_cache:
         try:
-            excel_data_cache['kable_df'] = pd.read_excel(file_path, sheet_name='Kable')
-            excel_data_cache['bębny_df'] = pd.read_excel(file_path, sheet_name='Wymiary')
+            workbook = openpyxl.load_workbook(file_path)
+            
+            # Ładowanie arkusza "Kable"
+            kable_sheet = workbook['Kable']
+            kable_data = []
+            headers_kable = [cell.value for cell in kable_sheet[1]]
+            
+            for row in kable_sheet.iter_rows(min_row=2, values_only=True):
+                if row[0]:  # Sprawdź czy pierwsza kolumna nie jest pusta
+                    row_dict = {headers_kable[i]: row[i] for i in range(len(headers_kable)) if i < len(row)}
+                    kable_data.append(row_dict)
+            
+            # Ładowanie arkusza "Wymiary"
+            bebny_sheet = workbook['Wymiary']
+            bebny_data = []
+            headers_bebny = [cell.value for cell in bebny_sheet[1]]
+            
+            for row in bebny_sheet.iter_rows(min_row=2, values_only=True):
+                if row[0]:  # Sprawdź czy pierwsza kolumna nie jest pusta
+                    row_dict = {headers_bebny[i]: row[i] for i in range(len(headers_bebny)) if i < len(row)}
+                    bebny_data.append(row_dict)
+            
+            excel_data_cache['kable_data'] = kable_data
+            excel_data_cache['bebny_data'] = bebny_data
+            
             logging.info("Dane Excel załadowane pomyślnie")
         except Exception as e:
             logging.error(f"Błąd ładowania danych Excel: {e}")
             raise
     
-    return excel_data_cache['kable_df'], excel_data_cache['bębny_df']
+    return excel_data_cache['kable_data'], excel_data_cache['bebny_data']
 
 def get_kable_options():
     """Pobiera opcje kabli i przekrojów żył"""
-    kable_df, _ = load_excel_data()
-    typy_kabli = kable_df['Nazwa'].unique().tolist()
+    kable_data, _ = load_excel_data()
+    typy_kabli = list(set([kabel['Nazwa'] for kabel in kable_data if kabel.get('Nazwa')]))
     opcje_kabli = {}
-    for kabel in typy_kabli:
-        przekroje = kable_df[kable_df['Nazwa'] == kabel]['Liczba i przekrój żył'].unique().tolist()
-        opcje_kabli[kabel] = przekroje
+    
+    for kabel_typ in typy_kabli:
+        przekroje = list(set([
+            kabel['Liczba i przekrój żył'] 
+            for kabel in kable_data 
+            if kabel.get('Nazwa') == kabel_typ and kabel.get('Liczba i przekrój żył')
+        ]))
+        opcje_kabli[kabel_typ] = przekroje
+    
     return opcje_kabli
 
 def validate_input_data(nazwa_kabla, liczba_przekroj, dlugosc_kabla):
@@ -101,19 +115,18 @@ def calculate_cable_on_drum(beben, srednica_kabla, dlugosc_kabla):
     
     return calkowita_dlugosc, warstwa
 
-def find_suitable_drums(srednica_kabla, promien_giecia, dlugosc_kabla, bebny_df):
+def find_suitable_drums(srednica_kabla, promien_giecia, dlugosc_kabla, bebny_data, masa_kabla_na_km):
     """Znajduje wszystkie odpowiednie bębny z dodatkowymi informacjami"""
     minimalna_wewnetrzna = promien_giecia * 2
     odpowiednie_bebny = []
     
-    for index, beben in bebny_df.iterrows():
-        if beben['średnica wewnętrzna'] >= minimalna_wewnetrzna:
+    for beben in bebny_data:
+        if beben.get('średnica wewnętrzna', 0) >= minimalna_wewnetrzna:
             calkowita_dlugosc, liczba_warstw = calculate_cable_on_drum(beben, srednica_kabla, dlugosc_kabla)
             
             if calkowita_dlugosc >= dlugosc_kabla:
-                masa_kabla = (dlugosc_kabla / 1000) * kable_df[(kable_df['Nazwa'] == nazwa_kabla) & 
-                                                               (kable_df['Liczba i przekrój żył'] == liczba_przekroj)]['Masa kg/km'].values[0]
-                masa_bębna = beben['Waga']
+                masa_kabla = (dlugosc_kabla / 1000) * masa_kabla_na_km
+                masa_bębna = beben.get('Waga', 0)
                 suma_wag = masa_kabla + masa_bębna
                 
                 wykorzystanie_procent = (dlugosc_kabla / calkowita_dlugosc) * 100
@@ -129,47 +142,6 @@ def find_suitable_drums(srednica_kabla, promien_giecia, dlugosc_kabla, bebny_df)
                 })
     
     return sorted(odpowiednie_bebny, key=lambda x: x['suma_wag'])
-
-def create_drum_visualization(drum_data, cable_length):
-    """Tworzy wizualizację bębna z kablem"""
-    fig, ax = plt.subplots(figsize=(10, 8))
-    
-    # Parametry bębna
-    drum_diameter = drum_data['beben']['Średnica']
-    inner_diameter = drum_data['beben']['średnica wewnętrzna']
-    width = drum_data['beben']['szerokość']
-    
-    # Rysowanie bębna
-    drum_circle = plt.Circle((0, 0), drum_diameter/2, fill=False, color='black', linewidth=3)
-    inner_circle = plt.Circle((0, 0), inner_diameter/2, fill=False, color='gray', linewidth=2)
-    
-    ax.add_patch(drum_circle)
-    ax.add_patch(inner_circle)
-    
-    # Rysowanie kabla (spirala)
-    layers = drum_data['liczba_warstw']
-    for layer in range(min(layers, 10)):  # Maksymalnie 10 warstw dla wizualizacji
-        radius = inner_diameter/2 + layer * 0.5
-        if radius < drum_diameter/2:
-            cable_circle = plt.Circle((0, 0), radius, fill=False, color='red', linewidth=1, alpha=0.7)
-            ax.add_patch(cable_circle)
-    
-    # Ustawienia wykresu
-    ax.set_xlim(-drum_diameter/2 - 10, drum_diameter/2 + 10)
-    ax.set_ylim(-drum_diameter/2 - 10, drum_diameter/2 + 10)
-    ax.set_aspect('equal')
-    ax.grid(True, alpha=0.3)
-    ax.set_title(f'Bęben {drum_diameter}cm - {cable_length}m kabla\n'
-                f'{layers} warstw, wykorzystanie: {drum_data["wykorzystanie_procent"]:.1f}%')
-    
-    # Zapisz do base64
-    buffer = BytesIO()
-    plt.savefig(buffer, format='png', dpi=150, bbox_inches='tight')
-    buffer.seek(0)
-    image_base64 = base64.b64encode(buffer.getvalue()).decode()
-    plt.close()
-    
-    return image_base64
 
 def save_calculation_history(calculation_data):
     """Zapisuje historię obliczeń do pliku JSON"""
@@ -194,58 +166,6 @@ def save_calculation_history(calculation_data):
     except Exception as e:
         logging.error(f"Błąd zapisywania historii: {e}")
 
-def generate_pdf_report(drum_data, cable_info, output_path):
-    """Generuje raport PDF z wynikami"""
-    c = canvas.Canvas(output_path, pagesize=A4)
-    width, height = A4
-    
-    # Nagłówek
-    c.setFont("Helvetica-Bold", 16)
-    c.drawString(50, height - 50, "Raport Kalkulacji Bębna Kablowego")
-    
-    # Data
-    c.setFont("Helvetica", 10)
-    c.drawString(50, height - 80, f"Data: {datetime.now().strftime('%d.%m.%Y %H:%M')}")
-    
-    # Dane kabla
-    y_pos = height - 120
-    c.setFont("Helvetica-Bold", 12)
-    c.drawString(50, y_pos, "Dane kabla:")
-    
-    y_pos -= 25
-    c.setFont("Helvetica", 10)
-    c.drawString(70, y_pos, f"Typ: {cable_info['nazwa']}")
-    y_pos -= 20
-    c.drawString(70, y_pos, f"Przekrój: {cable_info['przekroj']}")
-    y_pos -= 20
-    c.drawString(70, y_pos, f"Długość: {cable_info['dlugosc']} m")
-    
-    # Wyniki
-    y_pos -= 40
-    c.setFont("Helvetica-Bold", 12)
-    c.drawString(50, y_pos, "Zalecany bęben:")
-    
-    y_pos -= 25
-    c.setFont("Helvetica", 10)
-    beben = drum_data['beben']
-    c.drawString(70, y_pos, f"Średnica: {beben['Średnica']} cm")
-    y_pos -= 20
-    c.drawString(70, y_pos, f"Szerokość: {beben['szerokość']} cm")
-    y_pos -= 20
-    c.drawString(70, y_pos, f"Średnica wewnętrzna: {beben['średnica wewnętrzna']} cm")
-    y_pos -= 20
-    c.drawString(70, y_pos, f"Masa bębna: {drum_data['masa_bębna']} kg")
-    y_pos -= 20
-    c.drawString(70, y_pos, f"Masa kabla: {drum_data['masa_kabla']:.2f} kg")
-    y_pos -= 20
-    c.drawString(70, y_pos, f"Łączna masa: {drum_data['suma_wag']:.2f} kg")
-    y_pos -= 20
-    c.drawString(70, y_pos, f"Liczba warstw: {drum_data['liczba_warstw']}")
-    y_pos -= 20
-    c.drawString(70, y_pos, f"Wykorzystanie bębna: {drum_data['wykorzystanie_procent']:.1f}%")
-    
-    c.save()
-
 @app.route('/')
 def index():
     try:
@@ -266,8 +186,6 @@ def api_cable_options():
 
 @app.route('/oblicz', methods=['POST'])
 def oblicz_beben():
-    global kable_df
-    
     try:
         # Pobranie danych z formularza
         nazwa_kabla = request.form.get('nazwa_kabla', '').strip()
@@ -282,26 +200,33 @@ def oblicz_beben():
                                  opcje_kabli=get_kable_options())
         
         dlugosc_kabla = float(dlugosc_kabla)
-        kable_df, bębny_df = load_excel_data()
+        kable_data, bebny_data = load_excel_data()
         
-        # Filtrowanie kabla
-        wybrany_kabel = kable_df[(kable_df['Nazwa'] == nazwa_kabla) & 
-                                 (kable_df['Liczba i przekrój żył'] == liczba_przekroj)]
+        # Znajdź wybrany kabel
+        wybrany_kabel = None
+        for kabel in kable_data:
+            if (kabel.get('Nazwa') == nazwa_kabla and 
+                kabel.get('Liczba i przekrój żył') == liczba_przekroj):
+                wybrany_kabel = kabel
+                break
         
-        if wybrany_kabel.empty:
+        if not wybrany_kabel:
             return render_template('index.html', 
                                  wynik="Nie znaleziono kabla o podanych parametrach.", 
                                  opcje_kabli=get_kable_options())
         
         # Parametry kabla
-        srednica_kabla = wybrany_kabel['średnica zewnętrzna kabla'].values[0] / 10
-        promień_gięcia = wybrany_kabel['promień gięcia'].values[0] / 10
+        srednica_kabla = wybrany_kabel.get('średnica zewnętrzna kabla', 0) / 10
+        promień_gięcia = wybrany_kabel.get('promień gięcia', 0) / 10
+        masa_kabla_na_km = wybrany_kabel.get('Masa kg/km', 0)
         
         if dlugosc_kabla < 400:
             promień_gięcia -= 5
         
         # Znajdź wszystkie odpowiednie bębny
-        odpowiednie_bebny = find_suitable_drums(srednica_kabla, promień_gięcia, dlugosc_kabla, bębny_df)
+        odpowiednie_bebny = find_suitable_drums(
+            srednica_kabla, promień_gięcia, dlugosc_kabla, bebny_data, masa_kabla_na_km
+        )
         
         if not odpowiednie_bebny:
             return render_template('index.html', 
@@ -310,9 +235,6 @@ def oblicz_beben():
         
         # Najlepszy bęben (pierwszy z posortowanej listy)
         najlepszy_beben = odpowiednie_bebny[0]
-        
-        # Generuj wizualizację
-        visualization = create_drum_visualization(najlepszy_beben, dlugosc_kabla)
         
         # Zapisz historię
         calculation_data = {
@@ -323,15 +245,21 @@ def oblicz_beben():
         }
         save_calculation_history(calculation_data)
         
-        return render_template('results.html',
-                             najlepszy_beben=najlepszy_beben,
-                             wszystkie_bebny=odpowiednie_bebny[:5],  # Pokaż top 5
-                             cable_info={
-                                 'nazwa': nazwa_kabla,
-                                 'przekroj': liczba_przekroj,
-                                 'dlugosc': dlugosc_kabla
-                             },
-                             visualization=visualization,
+        # Stwórz proste wynik string (bez wizualizacji dla Vercel)
+        wynik = (
+            f"<strong>Zalecany bęben:</strong><br>"
+            f"Średnica: {najlepszy_beben['beben']['Średnica']} cm<br>"
+            f"Szerokość: {najlepszy_beben['beben']['szerokość']} cm<br>"
+            f"Średnica wewnętrzna: {najlepszy_beben['beben']['średnica wewnętrzna']} cm<br>"
+            f"Masa kabla: {najlepszy_beben['masa_kabla']:.2f} kg<br>"
+            f"Masa bębna: {najlepszy_beben['masa_bębna']} kg<br>"
+            f"Łączna masa: {najlepszy_beben['suma_wag']:.2f} kg<br>"
+            f"Wykorzystanie: {najlepszy_beben['wykorzystanie_procent']:.1f}%<br>"
+            f"Liczba warstw: {najlepszy_beben['liczba_warstw']}"
+        )
+        
+        return render_template('index.html',
+                             wynik=wynik,
                              opcje_kabli=get_kable_options())
                              
     except Exception as e:
@@ -356,17 +284,6 @@ def history():
         logging.error(f"Błąd ładowania historii: {e}")
         return render_template('error.html', error="Błąd ładowania historii")
 
-@app.route('/download-pdf')
-def download_pdf():
-    """Generuje i pobiera raport PDF"""
-    try:
-        # Tu powinieneś przekazać dane z ostatniego obliczenia
-        # Dla uproszczenia, zwróć informację o braku danych
-        return jsonify({"error": "Funkcja w przygotowaniu"}), 501
-    except Exception as e:
-        logging.error(f"Błąd generowania PDF: {e}")
-        return jsonify({"error": "Błąd serwera"}), 500
-
 @app.errorhandler(404)
 def not_found(error):
     return render_template('error.html', error="Strona nie została znaleziona"), 404
@@ -375,5 +292,6 @@ def not_found(error):
 def internal_error(error):
     return render_template('error.html', error="Wewnętrzny błąd serwera"), 500
 
+# Dla Vercel
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
