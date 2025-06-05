@@ -261,8 +261,10 @@
                                 <input type="text" 
                                        id="cable_search" 
                                        class="search-input" 
-                                       placeholder="Szukaj kabla (np. YAK, YAKY, itp.)" 
-                                       autocomplete="off">
+                                       placeholder="Wpisz lub wybierz typ kabla..."
+                                       autocomplete="off"
+                                       onclick="showAllCables()"
+                                       onfocus="showAllCables()">
                                 <input type="hidden" id="nazwa_kabla" name="nazwa_kabla" required>
                                 <div id="cable_dropdown" class="dropdown-list"></div>
                             </div>
@@ -277,8 +279,10 @@
                                 <input type="text" 
                                        id="section_search" 
                                        class="search-input" 
-                                       placeholder="Szukaj przekroju (np. 4x2.5, 3x1.5, itp.)" 
+                                       placeholder="Najpierw wybierz typ kabla"
                                        autocomplete="off"
+                                       onclick="showAllSections()"
+                                       onfocus="showAllSections()"
                                        disabled>
                                 <input type="hidden" id="liczba_przekroj" name="liczba_przekroj" required>
                                 <div id="section_dropdown" class="dropdown-list"></div>
@@ -333,13 +337,9 @@
         const sectionDropdown = document.getElementById('section_dropdown');
         const sectionHidden = document.getElementById('liczba_przekroj');
 
-        // Filter and display cable options
-        function filterCables(searchTerm) {
-            const filtered = allCableTypes.filter(cable => 
-                cable.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-            
-            displayDropdown(cableDropdown, filtered, (item) => {
+        // Show all cables on focus/click
+        function showAllCables() {
+            displayDropdown(cableDropdown, allCableTypes, (item) => {
                 cableSearch.value = item;
                 cableHidden.value = item;
                 cableDropdown.style.display = 'none';
@@ -347,23 +347,79 @@
                 // Enable section search and load sections
                 currentSections = opcjeKabli[item] || [];
                 sectionSearch.disabled = false;
-                sectionSearch.placeholder = 'Szukaj przekroju...';
+                sectionSearch.placeholder = 'Wpisz lub wybierz przekrój...';
                 sectionSearch.value = '';
                 sectionHidden.value = '';
+                sectionDropdown.style.display = 'none';
             });
+        }
+
+        // Show all sections on focus/click
+        function showAllSections() {
+            if (currentSections.length > 0) {
+                displayDropdown(sectionDropdown, currentSections, (item) => {
+                    sectionSearch.value = item;
+                    sectionHidden.value = item;
+                    sectionDropdown.style.display = 'none';
+                });
+            }
+        }
+
+        // Filter and display cable options
+        function filterCables(searchTerm) {
+            if (searchTerm === '') {
+                displayDropdown(cableDropdown, allCableTypes, (item) => {
+                    cableSearch.value = item;
+                    cableHidden.value = item;
+                    cableDropdown.style.display = 'none';
+                    
+                    // Enable section search and load sections
+                    currentSections = opcjeKabli[item] || [];
+                    sectionSearch.disabled = false;
+                    sectionSearch.placeholder = 'Wpisz lub wybierz przekrój...';
+                    sectionSearch.value = '';
+                    sectionHidden.value = '';
+                    sectionDropdown.style.display = 'none';
+                });
+            } else {
+                const filtered = allCableTypes.filter(cable => 
+                    cable.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+                
+                displayDropdown(cableDropdown, filtered, (item) => {
+                    cableSearch.value = item;
+                    cableHidden.value = item;
+                    cableDropdown.style.display = 'none';
+                    
+                    // Enable section search and load sections
+                    currentSections = opcjeKabli[item] || [];
+                    sectionSearch.disabled = false;
+                    sectionSearch.placeholder = 'Wpisz lub wybierz przekrój...';
+                    sectionSearch.value = '';
+                    sectionHidden.value = '';
+                });
+            }
         }
 
         // Filter and display section options
         function filterSections(searchTerm) {
-            const filtered = currentSections.filter(section => 
-                section.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-            
-            displayDropdown(sectionDropdown, filtered, (item) => {
-                sectionSearch.value = item;
-                sectionHidden.value = item;
-                sectionDropdown.style.display = 'none';
-            });
+            if (searchTerm === '') {
+                displayDropdown(sectionDropdown, currentSections, (item) => {
+                    sectionSearch.value = item;
+                    sectionHidden.value = item;
+                    sectionDropdown.style.display = 'none';
+                });
+            } else {
+                const filtered = currentSections.filter(section => 
+                    section.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+                
+                displayDropdown(sectionDropdown, filtered, (item) => {
+                    sectionSearch.value = item;
+                    sectionHidden.value = item;
+                    sectionDropdown.style.display = 'none';
+                });
+            }
         }
 
         // Generic dropdown display function
@@ -371,11 +427,20 @@
             dropdown.innerHTML = '';
             
             if (items.length === 0) {
-                dropdown.style.display = 'none';
+                const div = document.createElement('div');
+                div.className = 'dropdown-item';
+                div.textContent = 'Brak wyników';
+                div.style.opacity = '0.5';
+                div.style.cursor = 'default';
+                dropdown.appendChild(div);
+                dropdown.style.display = 'block';
                 return;
             }
 
-            items.forEach(item => {
+            // Limit to first 10 results for performance
+            const limitedItems = items.slice(0, 10);
+            
+            limitedItems.forEach(item => {
                 const div = document.createElement('div');
                 div.className = 'dropdown-item';
                 div.textContent = item;
@@ -383,21 +448,32 @@
                 dropdown.appendChild(div);
             });
 
+            // Show "więcej wyników" if there are more items
+            if (items.length > 10) {
+                const div = document.createElement('div');
+                div.className = 'dropdown-item';
+                div.textContent = `... i ${items.length - 10} więcej. Kontynuuj pisanie aby zawęzić.`;
+                div.style.opacity = '0.7';
+                div.style.fontStyle = 'italic';
+                div.style.cursor = 'default';
+                dropdown.appendChild(div);
+            }
+
             dropdown.style.display = 'block';
         }
 
         // Event listeners
         cableSearch.addEventListener('input', (e) => {
             const value = e.target.value;
-            if (value.length >= 1) {
-                filterCables(value);
-            } else {
-                cableDropdown.style.display = 'none';
+            filterCables(value);
+            
+            // Clear hidden value if typing (not selecting)
+            if (cableHidden.value !== value) {
                 cableHidden.value = '';
                 // Reset section search
                 sectionSearch.disabled = true;
                 sectionSearch.value = '';
-                sectionSearch.placeholder = 'Najpierw wybierz kabel';
+                sectionSearch.placeholder = 'Najpierw wybierz typ kabla';
                 sectionHidden.value = '';
                 sectionDropdown.style.display = 'none';
             }
@@ -405,10 +481,12 @@
 
         sectionSearch.addEventListener('input', (e) => {
             const value = e.target.value;
-            if (value.length >= 1 && currentSections.length > 0) {
+            if (currentSections.length > 0) {
                 filterSections(value);
-            } else {
-                sectionDropdown.style.display = 'none';
+            }
+            
+            // Clear hidden value if typing (not selecting)
+            if (sectionHidden.value !== value) {
                 sectionHidden.value = '';
             }
         });
@@ -420,6 +498,44 @@
                 sectionDropdown.style.display = 'none';
             }
         });
+
+        // Keyboard navigation
+        let highlightedIndex = -1;
+
+        cableSearch.addEventListener('keydown', (e) => {
+            const items = cableDropdown.querySelectorAll('.dropdown-item');
+            if (items.length === 0) return;
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                highlightedIndex = Math.min(highlightedIndex + 1, items.length - 1);
+                updateHighlight(items);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                highlightedIndex = Math.max(highlightedIndex - 1, -1);
+                updateHighlight(items);
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (highlightedIndex >= 0 && items[highlightedIndex]) {
+                    items[highlightedIndex].click();
+                }
+            } else if (e.key === 'Escape') {
+                cableDropdown.style.display = 'none';
+                highlightedIndex = -1;
+            }
+        });
+
+        function updateHighlight(items) {
+            items.forEach((item, index) => {
+                if (index === highlightedIndex) {
+                    item.style.backgroundColor = 'var(--primary-blue)';
+                    item.style.color = 'white';
+                } else {
+                    item.style.backgroundColor = '';
+                    item.style.color = '';
+                }
+            });
+        }
 
         // Form submission
         document.getElementById('calculatorForm').addEventListener('submit', function(e) {
