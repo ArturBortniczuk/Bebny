@@ -245,21 +245,13 @@ def oblicz_beben():
         }
         save_calculation_history(calculation_data)
         
-        # Stwórz proste wynik string (bez wizualizacji dla Vercel)
-        wynik = (
-            f"<strong>Zalecany bęben:</strong><br>"
-            f"Średnica: {najlepszy_beben['beben']['Średnica']} cm<br>"
-            f"Szerokość: {najlepszy_beben['beben']['szerokość']} cm<br>"
-            f"Średnica wewnętrzna: {najlepszy_beben['beben']['średnica wewnętrzna']} cm<br>"
-            f"Masa kabla: {najlepszy_beben['masa_kabla']:.2f} kg<br>"
-            f"Masa bębna: {najlepszy_beben['masa_bębna']} kg<br>"
-            f"Łączna masa: {najlepszy_beben['suma_wag']:.2f} kg<br>"
-            f"Wykorzystanie: {najlepszy_beben['wykorzystanie_procent']:.1f}%<br>"
-            f"Liczba warstw: {najlepszy_beben['liczba_warstw']}"
-        )
-        
+        # Przekaż dane do template jako strukturę
         return render_template('index.html',
-                             wynik=wynik,
+                             wynik_data={
+                                 'srednica_bebna': najlepszy_beben['beben']['Średnica'],
+                                 'laczna_masa': najlepszy_beben['suma_wag'],
+                                 'szczegoly': najlepszy_beben
+                             },
                              opcje_kabli=get_kable_options())
                              
     except Exception as e:
