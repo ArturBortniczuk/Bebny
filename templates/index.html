@@ -8,22 +8,18 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-light: #3b82f6;
-            --secondary: #64748b;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --gray-50: #f8fafc;
-            --gray-100: #f1f5f9;
-            --gray-200: #e2e8f0;
-            --gray-300: #cbd5e1;
-            --gray-400: #94a3b8;
-            --gray-500: #64748b;
-            --gray-600: #475569;
-            --gray-700: #334155;
-            --gray-800: #1e293b;
-            --gray-900: #0f172a;
+            --primary-color: #1e293b;
+            --secondary-color: #475569;
+            --accent-color: #0ea5e9;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --border-color: #475569;
         }
 
         * {
@@ -31,218 +27,171 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--gray-50);
-            color: var(--gray-900);
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text-primary);
             line-height: 1.6;
         }
 
-        /* Header */
-        .header {
-            background: white;
-            border-bottom: 1px solid var(--gray-200);
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .header-content {
-            padding: 1rem 0;
-        }
-
-        .header-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--gray-900);
-            margin: 0;
-        }
-
-        .header-subtitle {
-            color: var(--gray-600);
-            font-size: 0.875rem;
-            margin: 0;
-        }
-
-        .header-nav {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .header-nav a {
-            color: var(--gray-600);
-            text-decoration: none;
-            font-weight: 500;
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.375rem;
-            transition: all 0.2s;
-        }
-
-        .header-nav a:hover {
-            color: var(--primary);
-            background-color: var(--gray-100);
-        }
-
-        /* Main Content */
-        .main-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem 1rem;
-        }
-
-        .page-title {
-            font-size: 2.25rem;
-            font-weight: 800;
-            color: var(--gray-900);
-            margin-bottom: 0.5rem;
-            text-align: center;
-        }
-
-        .page-description {
-            color: var(--gray-600);
-            font-size: 1.125rem;
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        /* Cards */
-        .card-clean {
-            background: white;
-            border: 1px solid var(--gray-200);
-            border-radius: 0.75rem;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-            transition: all 0.2s;
-        }
-
-        .card-clean:hover {
+        /* Navbar */
+        .navbar {
+            background: rgba(15, 23, 42, 0.95) !important;
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            border-color: var(--gray-300);
         }
 
-        .card-header-clean {
-            padding: 1.5rem 1.5rem 0;
-            border-bottom: none;
-        }
-
-        .card-body-clean {
-            padding: 1.5rem;
-        }
-
-        .card-title {
-            font-size: 1.25rem;
+        .navbar-brand {
             font-weight: 700;
-            color: var(--gray-900);
-            margin-bottom: 0.5rem;
+            font-size: 1.25rem;
+            color: var(--text-primary) !important;
         }
 
-        /* Forms */
-        .form-group-clean {
-            margin-bottom: 1.5rem;
+        .nav-link {
+            color: var(--text-secondary) !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
         }
 
-        .form-label-clean {
-            display: block;
-            font-weight: 600;
-            color: var(--gray-900);
-            margin-bottom: 0.5rem;
-            font-size: 0.875rem;
-        }
-
-        .form-control-clean {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 2px solid var(--gray-300);
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            transition: all 0.2s;
-            background-color: white;
-        }
-
-        .form-control-clean:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        .form-select-clean {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 2px solid var(--gray-300);
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            transition: all 0.2s;
-            background-color: white;
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 0.5rem center;
-            background-repeat: no-repeat;
-            background-size: 1.5rem 1.5rem;
-            padding-right: 2.5rem;
-            appearance: none;
-        }
-
-        .form-select-clean:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        /* Buttons */
-        .btn-primary-clean {
-            background-color: var(--primary);
-            border: 2px solid var(--primary);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.2s;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        .btn-primary-clean:hover {
-            background-color: var(--primary-light);
-            border-color: var(--primary-light);
+        .nav-link:hover {
+            color: var(--accent-color) !important;
             transform: translateY(-1px);
         }
 
-        .btn-primary-clean:active {
+        /* Cards */
+        .card-modern {
+            background: linear-gradient(145deg, var(--bg-card), #475569);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: 
+                0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                0 2px 4px -1px rgba(0, 0, 0, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .card-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 10px 15px -3px rgba(0, 0, 0, 0.1),
+                0 4px 6px -2px rgba(0, 0, 0, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        /* Header */
+        .hero-section {
+            padding: 4rem 0 2rem;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-color));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        /* Forms */
+        .form-control-modern {
+            background: rgba(51, 65, 85, 0.8);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.875rem 1rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control-modern:focus {
+            background: rgba(51, 65, 85, 1);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+            color: var(--text-primary);
+        }
+
+        .form-control-modern::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+
+        .form-select-modern {
+            background: rgba(51, 65, 85, 0.8);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.875rem 1rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-select-modern:focus {
+            background: rgba(51, 65, 85, 1);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+            color: var(--text-primary);
+        }
+
+        .form-select-modern option {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+
+        .form-label-modern {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Buttons */
+        .btn-primary-modern {
+            background: linear-gradient(135deg, var(--accent-color), #0284c7);
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 14px 0 rgba(14, 165, 233, 0.3);
+        }
+
+        .btn-primary-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px 0 rgba(14, 165, 233, 0.4);
+            background: linear-gradient(135deg, #0284c7, var(--accent-color));
+        }
+
+        .btn-primary-modern:active {
             transform: translateY(0);
         }
 
-        .btn-secondary-clean {
-            background-color: white;
-            border: 2px solid var(--gray-300);
-            color: var(--gray-700);
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.2s;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-secondary-clean:hover {
-            background-color: var(--gray-50);
-            border-color: var(--gray-400);
-            color: var(--gray-800);
-        }
-
         /* Result Box */
-        .result-box {
-            background-color: #f0fdf4;
-            border: 2px solid var(--success);
-            border-radius: 0.75rem;
+        .result-modern {
+            background: linear-gradient(145deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+            border: 2px solid var(--success-color);
+            border-radius: 16px;
             padding: 1.5rem;
             margin-top: 1.5rem;
+            backdrop-filter: blur(10px);
         }
 
         .result-title {
+            color: var(--success-color);
             font-weight: 700;
-            color: var(--success);
+            font-size: 1.25rem;
             margin-bottom: 1rem;
             display: flex;
             align-items: center;
@@ -250,125 +199,148 @@
         }
 
         .result-content {
-            color: var(--gray-800);
-            line-height: 1.7;
+            color: var(--text-primary);
+            font-size: 1rem;
+            line-height: 1.8;
         }
 
-        /* Stats Grid */
-        .stats-grid {
+        /* Feature Cards */
+        .feature-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-
-        .stat-card {
-            text-align: center;
-            padding: 1.5rem;
-        }
-
-        .stat-icon {
-            width: 3rem;
-            height: 3rem;
-            background-color: var(--primary);
-            border-radius: 0.75rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
-            color: white;
-            font-size: 1.25rem;
-        }
-
-        .stat-title {
-            font-weight: 600;
-            color: var(--gray-900);
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-description {
-            color: var(--gray-600);
-            font-size: 0.875rem;
-        }
-
-        /* Alert */
-        .alert-clean {
-            padding: 1rem 1.25rem;
-            border-radius: 0.5rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid;
-        }
-
-        .alert-error {
-            background-color: #fef2f2;
-            border-color: var(--danger);
-            color: #991b1b;
-        }
-
-        .alert-success {
-            background-color: #f0fdf4;
-            border-color: var(--success);
-            color: #166534;
-        }
-
-        /* Steps */
-        .steps-container {
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
             margin-top: 3rem;
         }
 
-        .steps-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--gray-900);
-            margin-bottom: 2rem;
+        .feature-card {
+            padding: 2rem;
             text-align: center;
+            transition: all 0.3s ease;
+            height: 100%;
         }
 
-        .steps-grid {
+        .feature-icon {
+            width: 4rem;
+            height: 4rem;
+            background: linear-gradient(135deg, var(--accent-color), #0284c7);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Info Section */
+        .info-section {
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        .info-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .step-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 2rem;
         }
 
-        .step {
+        .step-item {
             text-align: center;
         }
 
         .step-number {
-            width: 2.5rem;
-            height: 2.5rem;
-            background-color: var(--primary);
-            color: white;
+            width: 3rem;
+            height: 3rem;
+            background: var(--accent-color);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 700;
             margin: 0 auto 1rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: white;
         }
 
         .step-title {
             font-weight: 600;
-            color: var(--gray-900);
+            color: var(--text-primary);
             margin-bottom: 0.5rem;
         }
 
         .step-description {
-            color: var(--gray-600);
-            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
         }
 
-        /* Loading */
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.25rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .card-modern {
+                margin: 0 1rem;
+            }
+            
+            .step-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading state */
         .loading {
-            opacity: 0.6;
+            opacity: 0.7;
             pointer-events: none;
         }
 
         .spinner {
-            width: 1rem;
-            height: 1rem;
+            width: 1.5rem;
+            height: 1.5rem;
             border: 2px solid transparent;
-            border-top: 2px solid currentColor;
+            border-top: 2px solid white;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             display: inline-block;
@@ -376,217 +348,193 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .main-content {
-                padding: 1rem;
-            }
-            
-            .page-title {
-                font-size: 1.875rem;
-            }
-            
-            .header-content {
-                flex-direction: column;
-                gap: 1rem;
-                text-align: center;
-            }
-            
-            .card-body-clean {
-                padding: 1rem;
+            to {
+                transform: rotate(360deg);
             }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container">
-            <div class="header-content d-flex justify-content-between align-items-center">
-                <div>
-                    <h1 class="header-title">
-                        <i class="fas fa-cogs me-2"></i>
-                        CableCalc Pro
-                    </h1>
-                    <p class="header-subtitle">Profesjonalny kalkulator bębnów kablowych</p>
-                </div>
-                <nav class="header-nav">
-                    <a href="/history">
-                        <i class="fas fa-history me-1"></i>
-                        Historia
-                    </a>
-                    <a href="#steps">
-                        <i class="fas fa-question-circle me-1"></i>
-                        Pomoc
-                    </a>
-                </nav>
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-cogs me-2"></i>
+                IndustrialCalc
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/history">
+                            <i class="fas fa-history me-1"></i>
+                            Historia
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#info">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Instrukcja
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
-    </header>
+    </nav>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <h1 class="page-title">Kalkulator Bębnów Kablowych</h1>
-        <p class="page-description">
-            Precyzyjne obliczenia parametrów bębnów dla przemysłu elektrotechnicznego
-        </p>
+    <div class="container" style="margin-top: 80px;">
+        <!-- Hero Section -->
+        <div class="hero-section animate-fade-in">
+            <h1 class="hero-title">Kalkulator Bębnów Kablowych</h1>
+            <p class="hero-subtitle">Profesjonalne narzędzie dla przemysłu elektrotechnicznego</p>
+        </div>
 
-        <div class="row">
-            <!-- Calculator -->
+        <div class="row justify-content-center">
+            <!-- Main Calculator -->
             <div class="col-lg-8">
-                <div class="card-clean">
-                    <div class="card-header-clean">
-                        <h2 class="card-title">
-                            <i class="fas fa-calculator me-2 text-primary"></i>
-                            Parametry kabla
-                        </h2>
-                    </div>
-                    <div class="card-body-clean">
-                        {% if wynik %}
-                        <div class="result-box">
-                            <div class="result-title">
-                                <i class="fas fa-check-circle"></i>
-                                Wynik obliczeń
-                            </div>
-                            <div class="result-content">
-                                {{ wynik|safe }}
-                            </div>
+                <div class="card-modern" style="padding: 2.5rem;">
+                    <h3 class="mb-4" style="color: var(--text-primary); font-weight: 700;">
+                        <i class="fas fa-calculator me-2" style="color: var(--accent-color);"></i>
+                        Oblicz parametry bębna
+                    </h3>
+
+                    {% if wynik %}
+                    <div class="result-modern">
+                        <div class="result-title">
+                            <i class="fas fa-check-circle"></i>
+                            Wynik obliczeń
                         </div>
-                        {% endif %}
-
-                        <form action="/oblicz" method="POST" id="calculatorForm">
-                            <div class="form-group-clean">
-                                <label for="nazwa_kabla" class="form-label-clean">
-                                    <i class="fas fa-plug me-1"></i>
-                                    Typ kabla
-                                </label>
-                                <select id="nazwa_kabla" name="nazwa_kabla" class="form-select-clean" required onchange="updatePrzekrojZylOptions()">
-                                    <option value="">Wybierz typ kabla...</option>
-                                    {% for kabel in opcje_kabli %}
-                                        <option value="{{ kabel }}">{{ kabel }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-
-                            <div class="form-group-clean">
-                                <label for="liczba_przekroj" class="form-label-clean">
-                                    <i class="fas fa-layer-group me-1"></i>
-                                    Liczba i przekrój żył
-                                </label>
-                                <select id="liczba_przekroj" name="liczba_przekroj" class="form-select-clean" required>
-                                    <option value="">Najpierw wybierz typ kabla</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group-clean">
-                                <label for="dlugosc_kabla" class="form-label-clean">
-                                    <i class="fas fa-ruler me-1"></i>
-                                    Długość kabla (metry)
-                                </label>
-                                <input type="number" id="dlugosc_kabla" name="dlugosc_kabla" 
-                                       class="form-control-clean" required min="1" max="10000" step="0.1"
-                                       placeholder="np. 500">
-                            </div>
-
-                            <button type="submit" class="btn-primary-clean" id="submitBtn">
-                                <span id="btnText">
-                                    <i class="fas fa-calculator me-2"></i>
-                                    Oblicz parametry bębna
-                                </span>
-                                <span id="btnLoading" style="display: none;">
-                                    <span class="spinner"></span>
-                                    Obliczanie...
-                                </span>
-                            </button>
-                        </form>
+                        <div class="result-content">
+                            {{ wynik|safe }}
+                        </div>
                     </div>
+                    {% endif %}
+
+                    <form action="/oblicz" method="POST" id="calculatorForm">
+                        <div class="mb-4">
+                            <label for="nazwa_kabla" class="form-label-modern">
+                                <i class="fas fa-plug"></i>
+                                Typ kabla
+                            </label>
+                            <select id="nazwa_kabla" name="nazwa_kabla" class="form-select form-select-modern" required onchange="updatePrzekrojZylOptions()">
+                                <option value="">Wybierz typ kabla...</option>
+                                {% for kabel in opcje_kabli %}
+                                    <option value="{{ kabel }}">{{ kabel }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="liczba_przekroj" class="form-label-modern">
+                                <i class="fas fa-layer-group"></i>
+                                Liczba i przekrój żył
+                            </label>
+                            <select id="liczba_przekroj" name="liczba_przekroj" class="form-select form-select-modern" required>
+                                <option value="">Najpierw wybierz typ kabla</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="dlugosc_kabla" class="form-label-modern">
+                                <i class="fas fa-ruler"></i>
+                                Długość kabla (metry)
+                            </label>
+                            <input type="number" id="dlugosc_kabla" name="dlugosc_kabla" 
+                                   class="form-control form-control-modern" required min="1" max="10000" step="0.1"
+                                   placeholder="Wprowadź długość kabla">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary-modern w-100" id="submitBtn">
+                            <span id="btnText">
+                                <i class="fas fa-calculator me-2"></i>
+                                Oblicz parametry bębna
+                            </span>
+                            <span id="btnLoading" style="display: none;">
+                                <span class="spinner"></span>
+                                Obliczanie...
+                            </span>
+                        </button>
+                    </form>
                 </div>
             </div>
 
-            <!-- Statistics -->
+            <!-- Features Sidebar -->
             <div class="col-lg-4">
-                <div class="card-clean">
-                    <div class="card-body-clean">
-                        <h3 class="card-title">Zalety narzędzia</h3>
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <div class="stat-icon">
-                                    <i class="fas fa-tachometer-alt"></i>
-                                </div>
-                                <div class="stat-title">Szybkość</div>
-                                <div class="stat-description">Błyskawiczne obliczenia w czasie rzeczywistym</div>
-                            </div>
+                <div class="feature-grid">
+                    <div class="card-modern feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-calculator"></i>
+                        </div>
+                        <div class="feature-title">Precyzyjne obliczenia</div>
+                        <div class="feature-description">
+                            Algorytmy uwzględniające wszystkie parametry techniczne kabli i bębnów
+                        </div>
+                    </div>
 
-                            <div class="stat-card">
-                                <div class="stat-icon">
-                                    <i class="fas fa-bullseye"></i>
-                                </div>
-                                <div class="stat-title">Precyzja</div>
-                                <div class="stat-description">Dokładne algorytmy uwzględniające wszystkie parametry</div>
-                            </div>
+                    <div class="card-modern feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <div class="feature-title">Baza danych</div>
+                        <div class="feature-description">
+                            Aktualna baza typów kabli i standardowych rozmiarów bębnów
+                        </div>
+                    </div>
 
-                            <div class="stat-card">
-                                <div class="stat-icon">
-                                    <i class="fas fa-database"></i>
-                                </div>
-                                <div class="stat-title">Baza danych</div>
-                                <div class="stat-description">Aktualna lista typów kabli i standardów</div>
-                            </div>
-
-                            <div class="stat-card">
-                                <div class="stat-icon">
-                                    <i class="fas fa-mobile-alt"></i>
-                                </div>
-                                <div class="stat-title">Mobilność</div>
-                                <div class="stat-description">Dostęp z każdego urządzenia, w każdym miejscu</div>
-                            </div>
+                    <div class="card-modern feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <div class="feature-title">Responsywność</div>
+                        <div class="feature-description">
+                            Działa na wszystkich urządzeniach - desktop, tablet, smartphone
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Steps -->
-        <div class="steps-container" id="steps">
-            <div class="card-clean">
-                <div class="card-body-clean">
-                    <h2 class="steps-title">Jak korzystać z kalkulatora</h2>
-                    <div class="steps-grid">
-                        <div class="step">
-                            <div class="step-number">1</div>
-                            <div class="step-title">Wybierz typ kabla</div>
-                            <div class="step-description">
-                                Z listy rozwijanej wybierz odpowiedni typ kabla zgodny z Twoimi wymaganiami
-                            </div>
-                        </div>
-                        
-                        <div class="step">
-                            <div class="step-number">2</div>
-                            <div class="step-title">Określ przekrój żył</div>
-                            <div class="step-description">
-                                Wybierz liczbę i przekrój żył dla wybranego typu kabla
-                            </div>
-                        </div>
-                        
-                        <div class="step">
-                            <div class="step-number">3</div>
-                            <div class="step-title">Wprowadź długość</div>
-                            <div class="step-description">
-                                Podaj wymaganą długość kabla w metrach i otrzymaj optymalne parametry bębna
-                            </div>
-                        </div>
+        <!-- Instructions -->
+        <div class="card-modern info-section" id="info">
+            <div class="info-title">
+                <i class="fas fa-lightbulb"></i>
+                Jak używać kalkulatora
+            </div>
+            
+            <div class="step-grid">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Wybierz kabel</div>
+                    <div class="step-description">
+                        Z listy rozwijanej wybierz odpowiedni typ kabla dla Twojego projektu
+                    </div>
+                </div>
+                
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Określ przekrój</div>
+                    <div class="step-description">
+                        Wybierz liczbę i przekrój żył odpowiednich dla wybranego kabla
+                    </div>
+                </div>
+                
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Podaj długość</div>
+                    <div class="step-description">
+                        Wprowadź wymaganą długość kabla w metrach i oblicz parametry
                     </div>
                 </div>
             </div>
         </div>
-    </main>
+    </div>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Dane kabli
         const opcjeKabli = {{ opcje_kabli|tojson }};
 
         function updatePrzekrojZylOptions() {
@@ -603,13 +551,18 @@
                     przekrojSelect.add(newOption);
                 });
             }
+
+            // Animacja
+            przekrojSelect.style.animation = 'fadeInUp 0.3s ease-out';
         }
 
+        // Loading state
         document.getElementById('calculatorForm').addEventListener('submit', function(e) {
             const submitBtn = document.getElementById('submitBtn');
             const btnText = document.getElementById('btnText');
             const btnLoading = document.getElementById('btnLoading');
             
+            // Walidacja
             const nazwa = document.getElementById('nazwa_kabla').value;
             const przekroj = document.getElementById('liczba_przekroj').value;
             const dlugosc = document.getElementById('dlugosc_kabla').value;
@@ -626,6 +579,7 @@
                 return;
             }
 
+            // Pokaż loading
             btnText.style.display = 'none';
             btnLoading.style.display = 'inline';
             submitBtn.disabled = true;
@@ -638,10 +592,18 @@
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target) {
                     target.scrollIntoView({
-                        behavior: 'smooth'
+                        behavior: 'smooth',
+                        block: 'start'
                     });
                 }
             });
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                document.getElementById('calculatorForm').submit();
+            }
         });
     </script>
 </body>
