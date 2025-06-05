@@ -697,6 +697,22 @@
                 document.getElementById('calculatorForm').submit();
             }
         });
+
+        // Historia w localStorage
+        {% if save_to_history %}
+        // Zapisz wynik do historii w localStorage
+        const historyData = {{ save_to_history|tojson }};
+        historyData.timestamp = new Date().toISOString();
+        
+        let history = JSON.parse(localStorage.getItem('calculationHistory') || '[]');
+        history.push(historyData);
+        
+        // Zachowaj tylko ostatnie 50 obliczeń
+        history = history.slice(-50);
+        
+        localStorage.setItem('calculationHistory', JSON.stringify(history));
+        console.log('Obliczenie zapisane do historii:', historyData.nazwa_kabla);
+        {% endif %}
     </script>
 </body>
 </html>
