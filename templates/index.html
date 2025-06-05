@@ -239,11 +239,48 @@
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="calculator-card">
-                    {% if wynik %}
+                    {% if wynik_data %}
                     <div class="result-box">
                         <div class="result-title">
                             <i class="fas fa-check-circle me-2"></i>
                             Wynik obliczeń
+                        </div>
+                        <div class="result-content">
+                            <!-- Kluczowe informacje -->
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="key-result">
+                                        <div class="key-label">Średnica bębna:</div>
+                                        <div class="key-value">{{ wynik_data.srednica_bebna }} cm</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="key-result">
+                                        <div class="key-label">Łączna masa:</div>
+                                        <div class="key-value">{{ "%.1f"|format(wynik_data.laczna_masa) }} kg</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Szczegółowe informacje -->
+                            <div class="details-section">
+                                <h6 class="details-title">Szczegóły bębna:</h6>
+                                <div class="details-grid">
+                                    <div><strong>Szerokość:</strong> {{ wynik_data.szczegoly.beben.szerokość }} cm</div>
+                                    <div><strong>Średnica wewnętrzna:</strong> {{ wynik_data.szczegoly.beben['średnica wewnętrzna'] }} cm</div>
+                                    <div><strong>Masa kabla:</strong> {{ "%.1f"|format(wynik_data.szczegoly.masa_kabla) }} kg</div>
+                                    <div><strong>Masa bębna:</strong> {{ wynik_data.szczegoly.masa_bębna }} kg</div>
+                                    <div><strong>Wykorzystanie:</strong> {{ "%.1f"|format(wynik_data.szczegoly.wykorzystanie_procent) }}%</div>
+                                    <div><strong>Liczba warstw:</strong> {{ wynik_data.szczegoly.liczba_warstw }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% elif wynik %}
+                    <div class="result-box">
+                        <div class="result-title">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Informacja
                         </div>
                         <div class="result-content">
                             {{ wynik|safe }}
