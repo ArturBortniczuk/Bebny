@@ -180,6 +180,52 @@
             color: var(--dark-blue);
         }
 
+        .key-result {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(0, 102, 204, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(0, 102, 204, 0.2);
+        }
+
+        .key-label {
+            font-size: 0.9rem;
+            color: var(--dark-blue);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .key-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        .details-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(0, 102, 204, 0.2);
+        }
+
+        .details-title {
+            color: var(--dark-blue);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .details-grid > div {
+            padding: 0.5rem;
+            background: rgba(248, 249, 250, 0.7);
+            border-radius: 5px;
+        }
+
         .loading {
             opacity: 0.7;
             pointer-events: none;
