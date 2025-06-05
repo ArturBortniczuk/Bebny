@@ -4,113 +4,347 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kalkulator Bębnów Kablowych</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #2563eb;
+            --success-color: #059669;
+            --warning-color: #d97706;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
         body {
-            background: linear-gradient(135deg, #1c1e21, #4b4e53);
-            color: white;
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
+            background: var(--gradient);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        h1, h2 {
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
             text-align: center;
+            color: white;
+            margin-bottom: 30px;
         }
 
-        .container {
-            padding: 2rem;
-            max-width: 600px;
-            background-color: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            margin-top: 5rem;
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
-        select, input[type="number"] {
-            margin-bottom: 1.5rem;
+        .calculator-form {
+            padding: 30px;
+            color: white;
         }
 
-        .result {
-            background-color: #fff;
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+            color: white;
+        }
+
+        .form-control, .form-select {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
+            color: white;
+        }
+
+        .form-select option {
+            background: #1f2937;
+            color: white;
+        }
+
+        .btn-calculate {
+            background: linear-gradient(45deg, var(--success-color), #10b981);
+            border: none;
+            border-radius: 50px;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+        }
+
+        .btn-calculate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4);
+            background: linear-gradient(45deg, #047857, var(--success-color));
+        }
+
+        .result-box {
+            background: rgba(255, 255, 255, 0.9);
             color: #333;
-            padding: 1.5rem;
-            border-radius: 8px;
-            border: 2px solid #28a745;
-            font-size: 1.2rem;
-            text-align: center;
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid var(--success-color);
+            font-size: 1.1rem;
+            margin-top: 20px;
         }
 
-        .result p {
-            margin: 0;
-        }
-
-        input[type="submit"] {
-            background-color: #28a745;
+        .alert-custom {
+            background: rgba(220, 38, 38, 0.1);
+            border: 1px solid rgba(220, 38, 38, 0.3);
             color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
         }
 
-        input[type="submit"]:hover {
-            background-color: #218838;
+        .navbar {
+            background: rgba(255, 255, 255, 0.1) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .navbar-brand, .nav-link {
+            color: white !important;
+            font-weight: 600;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .feature-card {
+            padding: 20px;
+            text-align: center;
+            color: white;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .calculator-form {
+                padding: 20px;
+            }
+            
+            .main-container {
+                padding: 10px;
+            }
         }
     </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-calculator me-2"></i>
+                Kalkulator Bębnów
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/history">
+                    <i class="fas fa-history me-1"></i>
+                    Historia
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container" style="margin-top: 80px;">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-drum me-3"></i>Kalkulator Bębnów Kablowych</h1>
+            <p>Profesjonalne obliczenia dla przemysłu elektrotechnicznego</p>
+        </div>
+
+        <!-- Formularz -->
+        <div class="glass-effect calculator-form">
+            <h3 class="mb-4">
+                <i class="fas fa-cogs me-2"></i>
+                Kalkulator
+            </h3>
+
+            {% if wynik %}
+            <div class="result-box">
+                <h5><i class="fas fa-check-circle me-2 text-success"></i>Wynik obliczeń:</h5>
+                {{ wynik|safe }}
+            </div>
+            {% endif %}
+
+            <form action="/oblicz" method="POST" id="calculatorForm">
+                <div class="form-group">
+                    <label for="nazwa_kabla" class="form-label">
+                        <i class="fas fa-plug me-2"></i>
+                        Typ kabla
+                    </label>
+                    <select id="nazwa_kabla" name="nazwa_kabla" class="form-select" required onchange="updatePrzekrojZylOptions()">
+                        <option value="">-- Wybierz typ kabla --</option>
+                        {% for kabel in opcje_kabli %}
+                            <option value="{{ kabel }}">{{ kabel }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="liczba_przekroj" class="form-label">
+                        <i class="fas fa-layer-group me-2"></i>
+                        Liczba i przekrój żył
+                    </label>
+                    <select id="liczba_przekroj" name="liczba_przekroj" class="form-select" required>
+                        <option value="">-- Najpierw wybierz typ kabla --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="dlugosc_kabla" class="form-label">
+                        <i class="fas fa-ruler me-2"></i>
+                        Długość kabla (w metrach)
+                    </label>
+                    <input type="number" id="dlugosc_kabla" name="dlugosc_kabla" 
+                           class="form-control" required min="1" max="10000" step="0.1"
+                           placeholder="np. 500">
+                </div>
+
+                <button type="submit" class="btn btn-calculate">
+                    <i class="fas fa-calculator me-2"></i>
+                    Oblicz najlepszy bęben
+                </button>
+            </form>
+        </div>
+
+        <!-- Funkcje -->
+        <div class="features-grid">
+            <div class="glass-effect feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h6>Dokładne obliczenia</h6>
+                <p>Precyzyjne wyliczenia na podstawie parametrów technicznych</p>
+            </div>
+
+            <div class="glass-effect feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-history"></i>
+                </div>
+                <h6>Historia obliczeń</h6>
+                <p>Przeglądaj poprzednie kalkulacje</p>
+            </div>
+
+            <div class="glass-effect feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h6>Responsywny design</h6>
+                <p>Działa na wszystkich urządzeniach</p>
+            </div>
+        </div>
+
+        <!-- Informacje -->
+        <div class="glass-effect mt-4" style="padding: 20px;">
+            <h5 class="text-white mb-3">
+                <i class="fas fa-info-circle me-2"></i>
+                Jak używać kalkulatora?
+            </h5>
+            <div class="row text-white">
+                <div class="col-md-4">
+                    <h6><i class="fas fa-step-forward me-2"></i>Krok 1</h6>
+                    <p>Wybierz typ kabla z listy</p>
+                </div>
+                <div class="col-md-4">
+                    <h6><i class="fas fa-step-forward me-2"></i>Krok 2</h6>
+                    <p>Wybierz przekrój żył</p>
+                </div>
+                <div class="col-md-4">
+                    <h6><i class="fas fa-step-forward me-2"></i>Krok 3</h6>
+                    <p>Wprowadź długość i oblicz</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Funkcja do dynamicznej aktualizacji przekroju żył na podstawie wybranego typu kabla
+        // Globalne dane opcji kabli
+        const opcjeKabli = {{ opcje_kabli|tojson }};
+
+        // Funkcja do aktualizacji opcji przekroju żył
         function updatePrzekrojZylOptions() {
-            var kabel = document.getElementById("nazwa_kabla").value;
-            var przekrojSelect = document.getElementById("liczba_przekroj");
+            const kabel = document.getElementById("nazwa_kabla").value;
+            const przekrojSelect = document.getElementById("liczba_przekroj");
 
             // Wyczyść obecne opcje
-            przekrojSelect.innerHTML = "";
-
-            // Opcje przekazywane z serwera (Flask)
-            var opcjeKabli = {{ opcje_kabli|tojson }};
+            przekrojSelect.innerHTML = '<option value="">-- Wybierz przekrój żył --</option>';
 
             // Dodaj opcje do listy przekroju żył
             if (opcjeKabli[kabel]) {
                 opcjeKabli[kabel].forEach(function(opcja) {
-                    var newOption = document.createElement("option");
+                    const newOption = document.createElement("option");
                     newOption.value = opcja;
                     newOption.text = opcja;
                     przekrojSelect.add(newOption);
                 });
             }
         }
+
+        // Walidacja formularza
+        document.getElementById('calculatorForm').addEventListener('submit', function(e) {
+            const nazwa = document.getElementById('nazwa_kabla').value;
+            const przekroj = document.getElementById('liczba_przekroj').value;
+            const dlugosc = document.getElementById('dlugosc_kabla').value;
+            
+            if (!nazwa || !przekroj || !dlugosc) {
+                e.preventDefault();
+                alert('Proszę wypełnić wszystkie pola!');
+                return;
+            }
+            
+            if (parseFloat(dlugosc) <= 0 || parseFloat(dlugosc) > 10000) {
+                e.preventDefault();
+                alert('Długość kabla musi być między 1 a 10000 metrów!');
+                return;
+            }
+        });
     </script>
-</head>
-<body>
-
-<main class="container">
-    <h1>Kalkulator Bębnów Kablowych</h1>
-    <form action="/oblicz" method="POST">
-        <label for="nazwa_kabla">Typ kabla:</label>
-        <select id="nazwa_kabla" name="nazwa_kabla" onchange="updatePrzekrojZylOptions()" required>
-            <option value="">-- Wybierz typ kabla --</option>
-            {% for kabel in opcje_kabli %}
-                <option value="{{ kabel }}">{{ kabel }}</option>
-            {% endfor %}
-        </select>
-
-        <label for="liczba_przekroj">Liczba i przekrój żył:</label>
-        <select id="liczba_przekroj" name="liczba_przekroj" required>
-            <option value="">-- Najpierw wybierz typ kabla --</option>
-        </select>
-
-        <label for="dlugosc_kabla">Długość kabla (w metrach):</label>
-        <input type="number" id="dlugosc_kabla" name="dlugosc_kabla" required>
-
-        <input type="submit" value="Oblicz bęben">
-    </form>
-
-    <h2>Wynik:</h2>
-    <div class="result">
-        {% if wynik %}
-            <p>{{ wynik|safe }}</p>
-        {% else %}
-            <p>Wprowadź dane i kliknij "Oblicz bęben", aby zobaczyć wynik.</p>
-        {% endif %}
-    </div>
-</main>
-
 </body>
 </html>
