@@ -148,13 +148,19 @@ def save_calculation_history(calculation_data):
     history_file = os.path.join(BASE_DIR, 'calculation_history.json')
     
     try:
+        # Dodaj timestamp
+        calculation_data['timestamp'] = datetime.now().isoformat()
+        
+        # Debug log
+        logging.info(f"Zapisywanie historii: {calculation_data['nazwa_kabla']} - {calculation_data['dlugosc']}m")
+        
         if os.path.exists(history_file):
             with open(history_file, 'r', encoding='utf-8') as f:
                 history = json.load(f)
         else:
             history = []
+            logging.info("Tworzenie nowego pliku historii")
         
-        calculation_data['timestamp'] = datetime.now().isoformat()
         history.append(calculation_data)
         
         # Zachowaj tylko ostatnie 100 obliczeń
@@ -162,9 +168,18 @@ def save_calculation_history(calculation_data):
         
         with open(history_file, 'w', encoding='utf-8') as f:
             json.dump(history, f, ensure_ascii=False, indent=2)
+        
+        logging.info(f"Historia zapisana, łącznie {len(history)} obliczeń")
             
     except Exception as e:
         logging.error(f"Błąd zapisywania historii: {e}")
+        # W przypadku błędu, spróbuj zapisać bez indentacji
+        try:
+            with open(history_file, 'w', encoding='utf-8') as f:
+                json.dump([calculation_data], f, ensure_ascii=False)
+            logging.info("Historia zapisana w trybie awaryjnym")
+        except Exception as e2:
+            logging.error(f"Krytyczny błąd zapisywania historii: {e2}")
 
 @app.route('/')
 def index():
@@ -241,13 +256,28 @@ def oblicz_beben():
             'nazwa_kabla': nazwa_kabla,
             'przekroj': liczba_przekroj,
             'dlugosc': dlugosc_kabla,
-            'wynik': najlepszy_beben
+            'wynik': {
+                'beben': {
+                    'Średnica': najlepszy_beben['beben']['Średnica'],
+                    'szerokość': najlepszy_beben['beben']['szerokość'],
+                    'średnica wewnętrzna': najlepszy_beben['beben']['średnica wewnętrzna'],
+                    'Waga': najlepszy_beben['beben'].get('Waga', 0)
+                },
+                'masa_kabla': najlepszy_beben['masa_kabla'],
+                'masa_bębna': najlepszy_beben['masa_bębna'],
+                'suma_wag': najlepszy_beben['suma_wag'],
+                'wykorzystanie_procent': najlepszy_beben['wykorzystanie_procent'],
+                'liczba_warstw': najlepszy_beben['liczba_warstw']
+            }
         }
         save_calculation_history(calculation_data)
         
         # Przekaż dane do template jako strukturę
         return render_template('index.html',
                              wynik_data={
+                                 'nazwa_kabla': nazwa_kabla,
+                                 'przekroj': liczba_przekroj,
+                                 'dlugosc': dlugosc_kabla,
                                  'srednica_bebna': najlepszy_beben['beben']['Średnica'],
                                  'laczna_masa': najlepszy_beben['suma_wag'],
                                  'szczegoly': najlepszy_beben
