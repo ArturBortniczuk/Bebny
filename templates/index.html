@@ -3,364 +3,185 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Bębnów Kablowych</title>
+    <title>Kalkulator Bębnów Kablowych - Grupa Eltron</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-light: #3b82f6;
-            --secondary: #64748b;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --gray-50: #f8fafc;
-            --gray-100: #f1f5f9;
-            --gray-200: #e2e8f0;
-            --gray-300: #cbd5e1;
-            --gray-400: #94a3b8;
-            --gray-500: #64748b;
-            --gray-600: #475569;
-            --gray-700: #334155;
-            --gray-800: #1e293b;
-            --gray-900: #0f172a;
-        }
-
-        * {
-            box-sizing: border-box;
+            --primary-blue: #0066cc;
+            --light-blue: #3399ff;
+            --dark-blue: #004499;
+            --gray-light: #f8f9fa;
+            --gray-border: #dee2e6;
+            --success-green: #28a745;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--gray-50);
-            color: var(--gray-900);
-            line-height: 1.6;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: white;
+            color: #333;
         }
 
-        /* Header */
         .header {
-            background: white;
-            border-bottom: 1px solid var(--gray-200);
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            background: linear-gradient(135deg, var(--primary-blue), var(--light-blue));
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,102,204,0.2);
         }
 
-        .header-content {
-            padding: 1rem 0;
-        }
-
-        .header-title {
-            font-size: 1.5rem;
+        .company-title {
+            font-size: 1.8rem;
             font-weight: 700;
-            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: 400;
+            opacity: 0.9;
             margin: 0;
         }
 
-        .header-subtitle {
-            color: var(--gray-600);
-            font-size: 0.875rem;
-            margin: 0;
-        }
-
-        .header-nav {
+        .nav-links {
             display: flex;
             gap: 1rem;
             align-items: center;
         }
 
-        .header-nav a {
-            color: var(--gray-600);
+        .nav-links a {
+            color: white;
             text-decoration: none;
-            font-weight: 500;
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.375rem;
-            transition: all 0.2s;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: background 0.3s;
         }
 
-        .header-nav a:hover {
-            color: var(--primary);
-            background-color: var(--gray-100);
+        .nav-links a:hover {
+            background: rgba(255,255,255,0.2);
+            color: white;
         }
 
-        /* Main Content */
-        .main-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem 1rem;
-        }
-
-        .page-title {
-            font-size: 2.25rem;
-            font-weight: 800;
-            color: var(--gray-900);
-            margin-bottom: 0.5rem;
-            text-align: center;
-        }
-
-        .page-description {
-            color: var(--gray-600);
-            font-size: 1.125rem;
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        /* Cards */
-        .card-clean {
+        .calculator-card {
             background: white;
-            border: 1px solid var(--gray-200);
-            border-radius: 0.75rem;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-            transition: all 0.2s;
+            border: 1px solid var(--gray-border);
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
         }
 
-        .card-clean:hover {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            border-color: var(--gray-300);
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-blue);
+            margin-bottom: 0.5rem;
         }
 
-        .card-header-clean {
-            padding: 1.5rem 1.5rem 0;
+        .form-control, .form-select {
+            border: 2px solid var(--gray-border);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 0.2rem rgba(0,102,204,0.25);
+        }
+
+        .searchable-select {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            border: 2px solid var(--gray-border);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 0.2rem rgba(0,102,204,0.25);
+            outline: none;
+        }
+
+        .dropdown-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid var(--primary-blue);
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid var(--gray-border);
+            transition: background 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--gray-light);
+        }
+
+        .dropdown-item:last-child {
             border-bottom: none;
         }
 
-        .card-body-clean {
-            padding: 1.5rem;
-        }
-
-        .card-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--gray-900);
-            margin-bottom: 0.5rem;
-        }
-
-        /* Forms */
-        .form-group-clean {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label-clean {
-            display: block;
-            font-weight: 600;
-            color: var(--gray-900);
-            margin-bottom: 0.5rem;
-            font-size: 0.875rem;
-        }
-
-        .form-control-clean {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 2px solid var(--gray-300);
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            transition: all 0.2s;
-            background-color: white;
-        }
-
-        .form-control-clean:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        .form-select-clean {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 2px solid var(--gray-300);
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            transition: all 0.2s;
-            background-color: white;
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 0.5rem center;
-            background-repeat: no-repeat;
-            background-size: 1.5rem 1.5rem;
-            padding-right: 2.5rem;
-            appearance: none;
-        }
-
-        .form-select-clean:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        /* Buttons */
-        .btn-primary-clean {
-            background-color: var(--primary);
-            border: 2px solid var(--primary);
+        .btn-calculate {
+            background: linear-gradient(135deg, var(--primary-blue), var(--light-blue));
+            border: none;
             color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
+            padding: 0.875rem 2rem;
+            font-size: 1.1rem;
             font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.2s;
-            cursor: pointer;
+            border-radius: 8px;
             width: 100%;
+            transition: all 0.3s;
         }
 
-        .btn-primary-clean:hover {
-            background-color: var(--primary-light);
-            border-color: var(--primary-light);
+        .btn-calculate:hover {
+            background: linear-gradient(135deg, var(--dark-blue), var(--primary-blue));
             transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(0,102,204,0.3);
         }
 
-        .btn-primary-clean:active {
-            transform: translateY(0);
-        }
-
-        .btn-secondary-clean {
-            background-color: white;
-            border: 2px solid var(--gray-300);
-            color: var(--gray-700);
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.2s;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-secondary-clean:hover {
-            background-color: var(--gray-50);
-            border-color: var(--gray-400);
-            color: var(--gray-800);
-        }
-
-        /* Result Box */
         .result-box {
-            background-color: #f0fdf4;
-            border: 2px solid var(--success);
-            border-radius: 0.75rem;
+            background: linear-gradient(135deg, #e8f5e8, #f0f8f0);
+            border: 2px solid var(--success-green);
+            border-radius: 10px;
             padding: 1.5rem;
             margin-top: 1.5rem;
         }
 
         .result-title {
+            color: var(--success-green);
             font-weight: 700;
-            color: var(--success);
+            font-size: 1.2rem;
             margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
 
         .result-content {
-            color: var(--gray-800);
-            line-height: 1.7;
+            color: #333;
+            line-height: 1.6;
         }
 
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 2rem;
+        .result-content strong {
+            color: var(--dark-blue);
         }
 
-        .stat-card {
-            text-align: center;
-            padding: 1.5rem;
-        }
-
-        .stat-icon {
-            width: 3rem;
-            height: 3rem;
-            background-color: var(--primary);
-            border-radius: 0.75rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
-            color: white;
-            font-size: 1.25rem;
-        }
-
-        .stat-title {
-            font-weight: 600;
-            color: var(--gray-900);
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-description {
-            color: var(--gray-600);
-            font-size: 0.875rem;
-        }
-
-        /* Alert */
-        .alert-clean {
-            padding: 1rem 1.25rem;
-            border-radius: 0.5rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid;
-        }
-
-        .alert-error {
-            background-color: #fef2f2;
-            border-color: var(--danger);
-            color: #991b1b;
-        }
-
-        .alert-success {
-            background-color: #f0fdf4;
-            border-color: var(--success);
-            color: #166534;
-        }
-
-        /* Steps */
-        .steps-container {
-            margin-top: 3rem;
-        }
-
-        .steps-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--gray-900);
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
-        .steps-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-        }
-
-        .step {
-            text-align: center;
-        }
-
-        .step-number {
-            width: 2.5rem;
-            height: 2.5rem;
-            background-color: var(--primary);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            margin: 0 auto 1rem;
-        }
-
-        .step-title {
-            font-weight: 600;
-            color: var(--gray-900);
-            margin-bottom: 0.5rem;
-        }
-
-        .step-description {
-            color: var(--gray-600);
-            font-size: 0.875rem;
-        }
-
-        /* Loading */
         .loading {
-            opacity: 0.6;
+            opacity: 0.7;
             pointer-events: none;
         }
 
@@ -368,7 +189,7 @@
             width: 1rem;
             height: 1rem;
             border: 2px solid transparent;
-            border-top: 2px solid currentColor;
+            border-top: 2px solid white;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             display: inline-block;
@@ -379,24 +200,17 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
-            .main-content {
-                padding: 1rem;
+            .header {
+                padding: 1.5rem 0;
             }
             
-            .page-title {
-                font-size: 1.875rem;
+            .company-title {
+                font-size: 1.5rem;
             }
             
-            .header-content {
-                flex-direction: column;
-                gap: 1rem;
-                text-align: center;
-            }
-            
-            .card-body-clean {
-                padding: 1rem;
+            .calculator-card {
+                padding: 1.5rem;
             }
         }
     </style>
@@ -405,22 +219,15 @@
     <!-- Header -->
     <header class="header">
         <div class="container">
-            <div class="header-content d-flex justify-content-between align-items-center">
+            <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h1 class="header-title">
-                        <i class="fas fa-cogs me-2"></i>
-                        CableCalc Pro
-                    </h1>
-                    <p class="header-subtitle">Profesjonalny kalkulator bębnów kablowych</p>
+                    <h1 class="company-title">Grupa Eltron</h1>
+                    <p class="app-title">Kalkulator Bębnów Kablowych</p>
                 </div>
-                <nav class="header-nav">
+                <nav class="nav-links">
                     <a href="/history">
                         <i class="fas fa-history me-1"></i>
                         Historia
-                    </a>
-                    <a href="#steps">
-                        <i class="fas fa-question-circle me-1"></i>
-                        Pomoc
                     </a>
                 </nav>
             </div>
@@ -428,190 +235,200 @@
     </header>
 
     <!-- Main Content -->
-    <main class="main-content">
-        <h1 class="page-title">Kalkulator Bębnów Kablowych</h1>
-        <p class="page-description">
-            Precyzyjne obliczenia parametrów bębnów dla przemysłu elektrotechnicznego
-        </p>
-
-        <div class="row">
-            <!-- Calculator -->
+    <div class="container">
+        <div class="row justify-content-center">
             <div class="col-lg-8">
-                <div class="card-clean">
-                    <div class="card-header-clean">
-                        <h2 class="card-title">
-                            <i class="fas fa-calculator me-2 text-primary"></i>
-                            Parametry kabla
-                        </h2>
-                    </div>
-                    <div class="card-body-clean">
-                        {% if wynik %}
-                        <div class="result-box">
-                            <div class="result-title">
-                                <i class="fas fa-check-circle"></i>
-                                Wynik obliczeń
-                            </div>
-                            <div class="result-content">
-                                {{ wynik|safe }}
-                            </div>
+                <div class="calculator-card">
+                    {% if wynik %}
+                    <div class="result-box">
+                        <div class="result-title">
+                            <i class="fas fa-check-circle me-2"></i>
+                            Wynik obliczeń
                         </div>
-                        {% endif %}
-
-                        <form action="/oblicz" method="POST" id="calculatorForm">
-                            <div class="form-group-clean">
-                                <label for="nazwa_kabla" class="form-label-clean">
-                                    <i class="fas fa-plug me-1"></i>
-                                    Typ kabla
-                                </label>
-                                <select id="nazwa_kabla" name="nazwa_kabla" class="form-select-clean" required onchange="updatePrzekrojZylOptions()">
-                                    <option value="">Wybierz typ kabla...</option>
-                                    {% for kabel in opcje_kabli %}
-                                        <option value="{{ kabel }}">{{ kabel }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-
-                            <div class="form-group-clean">
-                                <label for="liczba_przekroj" class="form-label-clean">
-                                    <i class="fas fa-layer-group me-1"></i>
-                                    Liczba i przekrój żył
-                                </label>
-                                <select id="liczba_przekroj" name="liczba_przekroj" class="form-select-clean" required>
-                                    <option value="">Najpierw wybierz typ kabla</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group-clean">
-                                <label for="dlugosc_kabla" class="form-label-clean">
-                                    <i class="fas fa-ruler me-1"></i>
-                                    Długość kabla (metry)
-                                </label>
-                                <input type="number" id="dlugosc_kabla" name="dlugosc_kabla" 
-                                       class="form-control-clean" required min="1" max="10000" step="0.1"
-                                       placeholder="np. 500">
-                            </div>
-
-                            <button type="submit" class="btn-primary-clean" id="submitBtn">
-                                <span id="btnText">
-                                    <i class="fas fa-calculator me-2"></i>
-                                    Oblicz parametry bębna
-                                </span>
-                                <span id="btnLoading" style="display: none;">
-                                    <span class="spinner"></span>
-                                    Obliczanie...
-                                </span>
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Statistics -->
-            <div class="col-lg-4">
-                <div class="card-clean">
-                    <div class="card-body-clean">
-                        <h3 class="card-title">Zalety narzędzia</h3>
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <div class="stat-icon">
-                                    <i class="fas fa-tachometer-alt"></i>
-                                </div>
-                                <div class="stat-title">Szybkość</div>
-                                <div class="stat-description">Błyskawiczne obliczenia w czasie rzeczywistym</div>
-                            </div>
-
-                            <div class="stat-card">
-                                <div class="stat-icon">
-                                    <i class="fas fa-bullseye"></i>
-                                </div>
-                                <div class="stat-title">Precyzja</div>
-                                <div class="stat-description">Dokładne algorytmy uwzględniające wszystkie parametry</div>
-                            </div>
-
-                            <div class="stat-card">
-                                <div class="stat-icon">
-                                    <i class="fas fa-database"></i>
-                                </div>
-                                <div class="stat-title">Baza danych</div>
-                                <div class="stat-description">Aktualna lista typów kabli i standardów</div>
-                            </div>
-
-                            <div class="stat-card">
-                                <div class="stat-icon">
-                                    <i class="fas fa-mobile-alt"></i>
-                                </div>
-                                <div class="stat-title">Mobilność</div>
-                                <div class="stat-description">Dostęp z każdego urządzenia, w każdym miejscu</div>
-                            </div>
+                        <div class="result-content">
+                            {{ wynik|safe }}
                         </div>
                     </div>
+                    {% endif %}
+
+                    <form action="/oblicz" method="POST" id="calculatorForm">
+                        <div class="mb-4">
+                            <label for="nazwa_kabla" class="form-label">
+                                <i class="fas fa-plug me-2 text-primary"></i>
+                                Typ kabla
+                            </label>
+                            <div class="searchable-select">
+                                <input type="text" 
+                                       id="cable_search" 
+                                       class="search-input" 
+                                       placeholder="Szukaj kabla (np. YAK, YAKY, itp.)" 
+                                       autocomplete="off">
+                                <input type="hidden" id="nazwa_kabla" name="nazwa_kabla" required>
+                                <div id="cable_dropdown" class="dropdown-list"></div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="liczba_przekroj" class="form-label">
+                                <i class="fas fa-layer-group me-2 text-primary"></i>
+                                Liczba i przekrój żył
+                            </label>
+                            <div class="searchable-select">
+                                <input type="text" 
+                                       id="section_search" 
+                                       class="search-input" 
+                                       placeholder="Szukaj przekroju (np. 4x2.5, 3x1.5, itp.)" 
+                                       autocomplete="off"
+                                       disabled>
+                                <input type="hidden" id="liczba_przekroj" name="liczba_przekroj" required>
+                                <div id="section_dropdown" class="dropdown-list"></div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="dlugosc_kabla" class="form-label">
+                                <i class="fas fa-ruler me-2 text-primary"></i>
+                                Długość kabla (metry)
+                            </label>
+                            <input type="number" 
+                                   id="dlugosc_kabla" 
+                                   name="dlugosc_kabla" 
+                                   class="form-control" 
+                                   required 
+                                   min="1" 
+                                   max="10000" 
+                                   step="0.1"
+                                   placeholder="Wprowadź długość kabla w metrach">
+                        </div>
+
+                        <button type="submit" class="btn-calculate" id="submitBtn">
+                            <span id="btnText">
+                                <i class="fas fa-calculator me-2"></i>
+                                Oblicz parametry bębna
+                            </span>
+                            <span id="btnLoading" style="display: none;">
+                                <span class="spinner"></span>
+                                Obliczanie...
+                            </span>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
-
-        <!-- Steps -->
-        <div class="steps-container" id="steps">
-            <div class="card-clean">
-                <div class="card-body-clean">
-                    <h2 class="steps-title">Jak korzystać z kalkulatora</h2>
-                    <div class="steps-grid">
-                        <div class="step">
-                            <div class="step-number">1</div>
-                            <div class="step-title">Wybierz typ kabla</div>
-                            <div class="step-description">
-                                Z listy rozwijanej wybierz odpowiedni typ kabla zgodny z Twoimi wymaganiami
-                            </div>
-                        </div>
-                        
-                        <div class="step">
-                            <div class="step-number">2</div>
-                            <div class="step-title">Określ przekrój żył</div>
-                            <div class="step-description">
-                                Wybierz liczbę i przekrój żył dla wybranego typu kabla
-                            </div>
-                        </div>
-                        
-                        <div class="step">
-                            <div class="step-number">3</div>
-                            <div class="step-title">Wprowadź długość</div>
-                            <div class="step-description">
-                                Podaj wymaganą długość kabla w metrach i otrzymaj optymalne parametry bębna
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
+    </div>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const opcjeKabli = {{ opcje_kabli|tojson }};
+        const allCableTypes = Object.keys(opcjeKabli);
+        let currentSections = [];
 
-        function updatePrzekrojZylOptions() {
-            const kabel = document.getElementById("nazwa_kabla").value;
-            const przekrojSelect = document.getElementById("liczba_przekroj");
+        // Cable search functionality
+        const cableSearch = document.getElementById('cable_search');
+        const cableDropdown = document.getElementById('cable_dropdown');
+        const cableHidden = document.getElementById('nazwa_kabla');
 
-            przekrojSelect.innerHTML = '<option value="">Wybierz przekrój żył...</option>';
+        const sectionSearch = document.getElementById('section_search');
+        const sectionDropdown = document.getElementById('section_dropdown');
+        const sectionHidden = document.getElementById('liczba_przekroj');
 
-            if (opcjeKabli[kabel]) {
-                opcjeKabli[kabel].forEach(function(opcja) {
-                    const newOption = document.createElement("option");
-                    newOption.value = opcja;
-                    newOption.text = opcja;
-                    przekrojSelect.add(newOption);
-                });
-            }
+        // Filter and display cable options
+        function filterCables(searchTerm) {
+            const filtered = allCableTypes.filter(cable => 
+                cable.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            
+            displayDropdown(cableDropdown, filtered, (item) => {
+                cableSearch.value = item;
+                cableHidden.value = item;
+                cableDropdown.style.display = 'none';
+                
+                // Enable section search and load sections
+                currentSections = opcjeKabli[item] || [];
+                sectionSearch.disabled = false;
+                sectionSearch.placeholder = 'Szukaj przekroju...';
+                sectionSearch.value = '';
+                sectionHidden.value = '';
+            });
         }
 
+        // Filter and display section options
+        function filterSections(searchTerm) {
+            const filtered = currentSections.filter(section => 
+                section.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            
+            displayDropdown(sectionDropdown, filtered, (item) => {
+                sectionSearch.value = item;
+                sectionHidden.value = item;
+                sectionDropdown.style.display = 'none';
+            });
+        }
+
+        // Generic dropdown display function
+        function displayDropdown(dropdown, items, onSelect) {
+            dropdown.innerHTML = '';
+            
+            if (items.length === 0) {
+                dropdown.style.display = 'none';
+                return;
+            }
+
+            items.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'dropdown-item';
+                div.textContent = item;
+                div.onclick = () => onSelect(item);
+                dropdown.appendChild(div);
+            });
+
+            dropdown.style.display = 'block';
+        }
+
+        // Event listeners
+        cableSearch.addEventListener('input', (e) => {
+            const value = e.target.value;
+            if (value.length >= 1) {
+                filterCables(value);
+            } else {
+                cableDropdown.style.display = 'none';
+                cableHidden.value = '';
+                // Reset section search
+                sectionSearch.disabled = true;
+                sectionSearch.value = '';
+                sectionSearch.placeholder = 'Najpierw wybierz kabel';
+                sectionHidden.value = '';
+                sectionDropdown.style.display = 'none';
+            }
+        });
+
+        sectionSearch.addEventListener('input', (e) => {
+            const value = e.target.value;
+            if (value.length >= 1 && currentSections.length > 0) {
+                filterSections(value);
+            } else {
+                sectionDropdown.style.display = 'none';
+                sectionHidden.value = '';
+            }
+        });
+
+        // Hide dropdowns when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.searchable-select')) {
+                cableDropdown.style.display = 'none';
+                sectionDropdown.style.display = 'none';
+            }
+        });
+
+        // Form submission
         document.getElementById('calculatorForm').addEventListener('submit', function(e) {
             const submitBtn = document.getElementById('submitBtn');
             const btnText = document.getElementById('btnText');
             const btnLoading = document.getElementById('btnLoading');
             
-            const nazwa = document.getElementById('nazwa_kabla').value;
-            const przekroj = document.getElementById('liczba_przekroj').value;
+            const nazwa = cableHidden.value;
+            const przekroj = sectionHidden.value;
             const dlugosc = document.getElementById('dlugosc_kabla').value;
             
             if (!nazwa || !przekroj || !dlugosc) {
@@ -626,22 +443,17 @@
                 return;
             }
 
+            // Show loading state
             btnText.style.display = 'none';
             btnLoading.style.display = 'inline';
             submitBtn.disabled = true;
         });
 
-        // Smooth scrolling
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                }
-            });
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                document.getElementById('calculatorForm').submit();
+            }
         });
     </script>
 </body>
