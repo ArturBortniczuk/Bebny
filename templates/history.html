@@ -10,7 +10,6 @@
         :root {
             --primary-color: #2563eb;
             --success-color: #059669;
-            --warning-color: #d97706;
             --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
@@ -51,32 +50,30 @@
             padding: 20px;
             margin-bottom: 20px;
             transition: all 0.3s ease;
-            animation: fadeInUp 0.6s ease-out;
         }
 
         .history-item:hover {
             background: rgba(255, 255, 255, 0.1);
             transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
 
         .history-header {
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
             flex-wrap: wrap;
         }
 
         .history-date {
-            color: var(--warning-color);
+            color: #f59e0b;
             font-size: 0.9rem;
             font-weight: 600;
         }
 
         .history-details {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 15px;
             margin-bottom: 15px;
         }
@@ -89,7 +86,7 @@
         }
 
         .detail-value {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: var(--success-color);
             margin-bottom: 5px;
@@ -99,13 +96,6 @@
             font-size: 0.8rem;
             opacity: 0.8;
             text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .history-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
         }
 
         .btn-action {
@@ -118,72 +108,12 @@
             font-weight: 600;
             text-decoration: none;
             transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 5px;
         }
 
         .btn-action:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
-            color: white;
-        }
-
-        .btn-repeat {
-            background: linear-gradient(45deg, var(--success-color), #10b981);
-        }
-
-        .btn-delete {
-            background: linear-gradient(45deg, #dc2626, #ef4444);
-        }
-
-        .search-container {
-            margin-bottom: 30px;
-        }
-
-        .search-input {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            border-radius: 25px;
-            padding: 12px 20px;
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .search-input:focus {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
-            color: white;
-            outline: none;
-        }
-
-        .search-input::placeholder {
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        .filter-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
-
-        .filter-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            border-radius: 20px;
-            padding: 8px 16px;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-        }
-
-        .filter-btn.active {
-            background: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-
-        .filter-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
             color: white;
         }
 
@@ -199,39 +129,6 @@
             opacity: 0.5;
         }
 
-        .pagination-container {
-            margin-top: 30px;
-            text-align: center;
-        }
-
-        .page-link {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-        }
-
-        .page-link:hover {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border-color: rgba(255, 255, 255, 0.3);
-        }
-
-        .page-item.active .page-link {
-            background: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
         @media (max-width: 768px) {
             .history-container {
                 padding: 20px;
@@ -243,17 +140,10 @@
                 gap: 10px;
             }
             
-            .history-actions {
-                width: 100%;
-            }
-            
             .btn-action {
-                flex: 1;
+                width: 100%;
+                margin-bottom: 10px;
                 text-align: center;
-            }
-            
-            .search-input {
-                max-width: 100%;
             }
         }
     </style>
@@ -279,46 +169,13 @@
         <div class="glass-effect history-container">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2><i class="fas fa-history me-2"></i>Historia Obliczeń</h2>
-                <button class="btn btn-action" onclick="clearHistory()">
-                    <i class="fas fa-trash me-2"></i>
-                    Wyczyść historię
-                </button>
-            </div>
-
-            <!-- Wyszukiwanie i filtry -->
-            <div class="search-container">
-                <div class="row">
-                    <div class="col-md-6">
-                        <input type="text" 
-                               class="search-input" 
-                               id="searchInput" 
-                               placeholder="Szukaj po typie kabla, długości..."
-                               onkeyup="filterHistory()">
-                    </div>
-                    <div class="col-md-6">
-                        <div class="filter-buttons">
-                            <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">
-                                <i class="fas fa-list me-1"></i>
-                                Wszystkie
-                            </button>
-                            <button class="filter-btn" data-filter="recent" onclick="setFilter('recent')">
-                                <i class="fas fa-clock me-1"></i>
-                                Ostatnie 7 dni
-                            </button>
-                            <button class="filter-btn" data-filter="long" onclick="setFilter('long')">
-                                <i class="fas fa-ruler me-1"></i>
-                                Długie kable (>500m)
-                            </button>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <!-- Historia obliczeń -->
             <div id="historyContainer">
                 {% if history %}
                     {% for item in history|reverse %}
-                    <div class="history-item" data-cable="{{ item.nazwa_kabla }}" data-length="{{ item.dlugosc }}" data-date="{{ item.timestamp }}">
+                    <div class="history-item">
                         <div class="history-header">
                             <div>
                                 <h5 class="mb-1">
@@ -327,8 +184,11 @@
                                 </h5>
                                 <div class="history-date">
                                     <i class="fas fa-calendar me-1"></i>
-                                    {% set timestamp = item.timestamp %}
-                                    {{ moment(timestamp).format('DD.MM.YYYY HH:mm') if timestamp else 'Brak daty' }}
+                                    {% if item.timestamp %}
+                                        {{ item.timestamp[:19]|replace('T', ' ') }}
+                                    {% else %}
+                                        Brak daty
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -363,17 +223,9 @@
                         </div>
 
                         <div class="history-actions">
-                            <a href="#" class="btn-action btn-repeat" onclick="repeatCalculation('{{ item.nazwa_kabla }}', '{{ item.przekroj }}', {{ item.dlugosc }})">
+                            <a href="/" class="btn-action" onclick="repeatCalculation('{{ item.nazwa_kabla }}', '{{ item.przekroj }}', {{ item.dlugosc }})">
                                 <i class="fas fa-redo me-1"></i>
-                                Powtórz
-                            </a>
-                            <a href="#" class="btn-action" onclick="viewDetails({{ loop.index0 }})">
-                                <i class="fas fa-eye me-1"></i>
-                                Szczegóły
-                            </a>
-                            <a href="#" class="btn-action btn-delete" onclick="deleteItem({{ loop.index0 }})">
-                                <i class="fas fa-trash me-1"></i>
-                                Usuń
+                                Powtórz obliczenie
                             </a>
                         </div>
                     </div>
@@ -383,56 +235,12 @@
                         <i class="fas fa-inbox"></i>
                         <h4>Brak historii obliczeń</h4>
                         <p>Wykonaj pierwsze obliczenie, aby zobaczyć historię tutaj.</p>
-                        <a href="/" class="btn btn-action">
+                        <a href="/" class="btn-action">
                             <i class="fas fa-calculator me-2"></i>
                             Rozpocznij obliczenia
                         </a>
                     </div>
                 {% endif %}
-            </div>
-
-            <!-- Paginacja -->
-            {% if history and history|length > 10 %}
-            <div class="pagination-container">
-                <nav aria-label="Historia pagination">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item">
-                            <a class="page-link" href="#" onclick="changePage(-1)">
-                                <i class="fas fa-chevron-left"></i>
-                            </a>
-                        </li>
-                        <li class="page-item active">
-                            <span class="page-link" id="currentPage">1</span>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="#" onclick="changePage(1)">
-                                <i class="fas fa-chevron-right"></i>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-
-    <!-- Modal szczegółów -->
-    <div class="modal fade" id="detailsModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content" style="background: rgba(30, 41, 59, 0.95); color: white; border: none;">
-                <div class="modal-header border-bottom border-secondary">
-                    <h5 class="modal-title">
-                        <i class="fas fa-info-circle me-2"></i>
-                        Szczegóły obliczenia
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body" id="modalContent">
-                    <!-- Treść będzie wstawiona przez JavaScript -->
-                </div>
-                <div class="modal-footer border-top border-secondary">
-                    <button type="button" class="btn btn-action" data-bs-dismiss="modal">Zamknij</button>
-                </div>
             </div>
         </div>
     </div>
@@ -440,70 +248,6 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Dane historii (przekazane z serwera)
-        const historyData = {{ history|tojson if history else '[]' }};
-        let currentFilter = 'all';
-        let currentPage = 1;
-        const itemsPerPage = 10;
-
-        // Formatowanie daty
-        function formatDate(dateString) {
-            if (!dateString) return 'Brak daty';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('pl-PL') + ' ' + date.toLocaleTimeString('pl-PL', {hour: '2-digit', minute: '2-digit'});
-        }
-
-        // Filtrowanie historii
-        function filterHistory() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const historyItems = document.querySelectorAll('.history-item');
-
-            historyItems.forEach(item => {
-                const cable = item.dataset.cable.toLowerCase();
-                const length = item.dataset.length;
-                const isVisible = cable.includes(searchTerm) || length.includes(searchTerm);
-                
-                item.style.display = isVisible ? 'block' : 'none';
-                
-                if (isVisible) {
-                    item.style.animation = 'fadeInUp 0.3s ease-out';
-                }
-            });
-        }
-
-        // Ustawianie filtra
-        function setFilter(filter) {
-            currentFilter = filter;
-            const filterButtons = document.querySelectorAll('.filter-btn');
-            const historyItems = document.querySelectorAll('.history-item');
-
-            // Aktualizuj przyciski
-            filterButtons.forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.dataset.filter === filter) {
-                    btn.classList.add('active');
-                }
-            });
-
-            // Filtruj elementy
-            const now = new Date();
-            const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-
-            historyItems.forEach(item => {
-                let isVisible = true;
-                
-                if (filter === 'recent') {
-                    const itemDate = new Date(item.dataset.date);
-                    isVisible = itemDate >= weekAgo;
-                } else if (filter === 'long') {
-                    const length = parseFloat(item.dataset.length);
-                    isVisible = length > 500;
-                }
-                
-                item.style.display = isVisible ? 'block' : 'none';
-            });
-        }
-
         // Powtórz obliczenie
         function repeatCalculation(nazwa, przekroj, dlugosc) {
             // Zapisz dane do localStorage i przekieruj
@@ -512,122 +256,17 @@
                 liczba_przekroj: przekroj,
                 dlugosc_kabla: dlugosc
             };
-            localStorage.setItem('calculatorFormData', JSON.stringify(formData));
-            window.location.href = '/';
-        }
-
-        // Wyświetl szczegóły
-        function viewDetails(index) {
-            if (historyData[historyData.length - 1 - index]) {
-                const item = historyData[historyData.length - 1 - index];
-                const modalContent = document.getElementById('modalContent');
-                
-                modalContent.innerHTML = `
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6>Dane kabla:</h6>
-                            <ul class="list-unstyled">
-                                <li><strong>Typ:</strong> ${item.nazwa_kabla}</li>
-                                <li><strong>Przekrój:</strong> ${item.przekroj}</li>
-                                <li><strong>Długość:</strong> ${item.dlugosc} m</li>
-                                <li><strong>Data:</strong> ${formatDate(item.timestamp)}</li>
-                            </ul>
-                        </div>
-                        <div class="col-md-6">
-                            ${item.wynik ? `
-                                <h6>Wynik:</h6>
-                                <ul class="list-unstyled">
-                                    <li><strong>Średnica bębna:</strong> ${item.wynik.beben.Średnica} cm</li>
-                                    <li><strong>Szerokość:</strong> ${item.wynik.beben.szerokość} cm</li>
-                                    <li><strong>Masa kabla:</strong> ${item.wynik.masa_kabla.toFixed(1)} kg</li>
-                                    <li><strong>Masa bębna:</strong> ${item.wynik.masa_bębna} kg</li>
-                                    <li><strong>Łączna masa:</strong> ${item.wynik.suma_wag.toFixed(1)} kg</li>
-                                    <li><strong>Wykorzystanie:</strong> ${item.wynik.wykorzystanie_procent.toFixed(1)}%</li>
-                                    <li><strong>Liczba warstw:</strong> ${item.wynik.liczba_warstw}</li>
-                                </ul>
-                            ` : '<p>Brak szczegółowych danych wyników.</p>'}
-                        </div>
-                    </div>
-                `;
-                
-                const modal = new bootstrap.Modal(document.getElementById('detailsModal'));
-                modal.show();
-            }
-        }
-
-        // Usuń element
-        function deleteItem(index) {
-            if (confirm('Czy na pewno chcesz usunąć ten element z historii?')) {
-                // Tu powinna być implementacja usuwania po stronie serwera
-                const historyItems = document.querySelectorAll('.history-item');
-                if (historyItems[index]) {
-                    historyItems[index].style.animation = 'fadeOut 0.3s ease-out';
-                    setTimeout(() => {
-                        historyItems[index].remove();
-                    }, 300);
-                }
-            }
-        }
-
-        // Wyczyść całą historię
-        function clearHistory() {
-            if (confirm('Czy na pewno chcesz wyczyścić całą historię obliczeń?')) {
-                // Tu powinna być implementacja czyszczenia po stronie serwera
-                document.getElementById('historyContainer').innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-inbox"></i>
-                        <h4>Historia została wyczyszczona</h4>
-                        <p>Wykonaj nowe obliczenie, aby utworzyć nową historię.</p>
-                        <a href="/" class="btn btn-action">
-                            <i class="fas fa-calculator me-2"></i>
-                            Rozpocznij obliczenia
-                        </a>
-                    </div>
-                `;
-            }
-        }
-
-        // Zmiana strony (dla paginacji)
-        function changePage(direction) {
-            // Implementacja paginacji
-            console.log('Zmiana strony:', direction);
-        }
-
-        // Animacja fadeOut
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes fadeOut {
-                from { opacity: 1; transform: translateY(0); }
-                to { opacity: 0; transform: translateY(-20px); }
-            }
-        `;
-        document.head.appendChild(style);
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            // Ctrl + F = focus search
-            if (e.ctrlKey && e.key === 'f') {
-                e.preventDefault();
-                document.getElementById('searchInput').focus();
-            }
             
-            // Escape = clear search
-            if (e.key === 'Escape') {
-                document.getElementById('searchInput').value = '';
-                filterHistory();
-            }
-        });
-
-        // Inicjalizacja
-        document.addEventListener('DOMContentLoaded', function() {
-            // Animuj elementy przy ładowaniu
-            const historyItems = document.querySelectorAll('.history-item');
-            historyItems.forEach((item, index) => {
-                setTimeout(() => {
-                    item.style.animation = 'fadeInUp 0.6s ease-out';
-                }, index * 100);
+            // Ustaw parametry URL
+            const params = new URLSearchParams({
+                nazwa_kabla: nazwa,
+                liczba_przekroj: przekroj,
+                dlugosc_kabla: dlugosc
             });
-        });
+            
+            // Przekieruj z parametrami
+            window.location.href = '/?' + params.toString();
+        }
     </script>
 </body>
 </html>
