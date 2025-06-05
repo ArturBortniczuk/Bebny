@@ -57,6 +57,12 @@
             border-radius: 8px;
             padding: 1.5rem;
             margin-bottom: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .history-item:hover {
+            box-shadow: 0 3px 15px rgba(0,102,204,0.15);
+            border-color: #0066cc;
         }
 
         .cable-name {
@@ -106,11 +112,26 @@
             border-radius: 6px;
             text-decoration: none;
             font-size: 0.9rem;
+            margin-right: 0.5rem;
         }
 
         .btn-repeat:hover {
             background: #218838;
             color: white;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .btn-delete:hover {
+            background: #c82333;
         }
 
         .empty-state {
@@ -119,14 +140,43 @@
             color: #666;
         }
 
-        .debug-info {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
+        .search-input {
+            border: 2px solid #dee2e6;
             border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 2rem;
-            font-family: 'Courier New', monospace;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 1rem;
+        }
+
+        .search-input:focus {
+            border-color: #0066cc;
+            outline: none;
+        }
+
+        .clear-all-btn {
+            background: #dc3545;
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
             font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .clear-all-btn:hover {
+            background: #c82333;
+        }
+
+        @media (max-width: 768px) {
+            .history-card {
+                padding: 1.5rem;
+            }
+
+            .result-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
     </style>
 </head>
@@ -152,89 +202,167 @@
     <!-- Main Content -->
     <div class="container">
         <div class="history-card">
-            <h2 style="color: #004499; margin-bottom: 1.5rem;">
-                <i class="fas fa-history me-2"></i>
-                Historia Obliczeń
-            </h2>
-
-            <!-- Debug Info -->
-            <div class="debug-info">
-                <strong>Debug Info:</strong><br>
-                Historia przekazana z serwera: {{ history|length if history else 0 }} elementów<br>
-                {% if history %}
-                Pierwszy element: {{ history[0].nazwa_kabla if history[0].nazwa_kabla else 'Brak nazwy' }}<br>
-                {% endif %}
-                Timestamp: {{ moment().format('YYYY-MM-DD HH:mm:ss') if moment else 'Brak daty' }}
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 style="color: #004499; margin: 0;">
+                    <i class="fas fa-history me-2"></i>
+                    Historia Obliczeń
+                    <span id="historyCount" class="badge bg-primary ms-2">0</span>
+                </h2>
+                <button class="clear-all-btn" onclick="clearAllHistory()">
+                    <i class="fas fa-trash me-1"></i>
+                    Wyczyść historię
+                </button>
             </div>
 
-            <!-- History Items -->
-            {% if history %}
-                {% for item in history|reverse %}
-                <div class="history-item">
-                    <div class="cable-name">
-                        <i class="fas fa-plug me-2"></i>
-                        {{ item.nazwa_kabla or 'Nieznany kabel' }}
-                    </div>
-                    
-                    <div class="history-date">
-                        <i class="fas fa-calendar me-1"></i>
-                        {% if item.timestamp %}
-                            {{ item.timestamp[:19]|replace('T', ' ') }}
-                        {% else %}
-                            Brak daty
-                        {% endif %}
-                    </div>
+            <!-- Search -->
+            <div class="mb-3">
+                <input type="text" 
+                       class="search-input" 
+                       id="searchInput" 
+                       placeholder="Szukaj po typie kabla lub długości..."
+                       onkeyup="filterHistory()">
+            </div>
 
-                    <div class="result-grid">
-                        <div class="result-item">
-                            <div class="result-label">Przekrój</div>
-                            <div class="result-value">{{ item.przekroj or 'N/A' }}</div>
-                        </div>
-                        
-                        <div class="result-item">
-                            <div class="result-label">Długość</div>
-                            <div class="result-value">{{ item.dlugosc or 'N/A' }} m</div>
-                        </div>
-                        
-                        {% if item.wynik %}
-                        <div class="result-item">
-                            <div class="result-label">Średnica bębna</div>
-                            <div class="result-value">{{ item.wynik.beben.Średnica or 'N/A' }} cm</div>
-                        </div>
-                        
-                        <div class="result-item">
-                            <div class="result-label">Łączna masa</div>
-                            <div class="result-value">{{ "%.1f"|format(item.wynik.suma_wag) or 'N/A' }} kg</div>
-                        </div>
-                        {% endif %}
-                    </div>
-
-                    <a href="/" class="btn-repeat">
-                        <i class="fas fa-redo me-1"></i>
-                        Powtórz obliczenie
-                    </a>
-                </div>
-                {% endfor %}
-            {% else %}
+            <!-- History Container -->
+            <div id="historyContainer">
                 <div class="empty-state">
                     <i class="fas fa-inbox" style="font-size: 4rem; color: #dee2e6; margin-bottom: 1rem;"></i>
-                    <h4 style="color: #004499;">Brak historii obliczeń</h4>
-                    <p>Wykonaj pierwsze obliczenie, aby zobaczyć historię tutaj.</p>
-                    <a href="/" class="btn-repeat">
-                        <i class="fas fa-calculator me-2"></i>
-                        Rozpocznij obliczenia
-                    </a>
+                    <h4 style="color: #004499;">Ładowanie historii...</h4>
                 </div>
-            {% endif %}
-
-            <!-- Raw Data Debug (tylko dla testów) -->
-            <details style="margin-top: 2rem;">
-                <summary style="cursor: pointer; color: #0066cc;">🔍 Raw Data (debug)</summary>
-                <pre style="background: #f8f9fa; padding: 1rem; border-radius: 4px; font-size: 0.8rem; overflow-x: auto;">{{ history|tojson(indent=2) if history else 'Brak danych' }}</pre>
-            </details>
+            </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Ładowanie historii z localStorage
+        function loadHistory() {
+            const history = JSON.parse(localStorage.getItem('calculationHistory') || '[]');
+            const container = document.getElementById('historyContainer');
+            const countBadge = document.getElementById('historyCount');
+            
+            countBadge.textContent = history.length;
+
+            if (history.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox" style="font-size: 4rem; color: #dee2e6; margin-bottom: 1rem;"></i>
+                        <h4 style="color: #004499;">Brak historii obliczeń</h4>
+                        <p>Wykonaj pierwsze obliczenie, aby zobaczyć historię tutaj.</p>
+                        <a href="/" class="btn-repeat">
+                            <i class="fas fa-calculator me-2"></i>
+                            Rozpocznij obliczenia
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            // Sortuj od najnowszych
+            history.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            let html = '';
+            history.forEach((item, index) => {
+                const date = new Date(item.timestamp);
+                const formattedDate = date.toLocaleString('pl-PL');
+                
+                html += `
+                    <div class="history-item" data-cable="${item.nazwa_kabla}" data-length="${item.dlugosc}">
+                        <div class="cable-name">
+                            <i class="fas fa-plug me-2"></i>
+                            ${item.nazwa_kabla}
+                        </div>
+                        
+                        <div class="history-date">
+                            <i class="fas fa-calendar me-1"></i>
+                            ${formattedDate}
+                        </div>
+
+                        <div class="result-grid">
+                            <div class="result-item">
+                                <div class="result-label">Przekrój</div>
+                                <div class="result-value">${item.przekroj}</div>
+                            </div>
+                            
+                            <div class="result-item">
+                                <div class="result-label">Długość</div>
+                                <div class="result-value">${item.dlugosc} m</div>
+                            </div>
+                            
+                            <div class="result-item">
+                                <div class="result-label">Średnica bębna</div>
+                                <div class="result-value">${item.wynik.beben.Średnica} cm</div>
+                            </div>
+                            
+                            <div class="result-item">
+                                <div class="result-label">Łączna masa</div>
+                                <div class="result-value">${item.wynik.suma_wag.toFixed(1)} kg</div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <a href="/" class="btn-repeat" onclick="repeatCalculation('${item.nazwa_kabla}', '${item.przekroj}', ${item.dlugosc})">
+                                <i class="fas fa-redo me-1"></i>
+                                Powtórz
+                            </a>
+                            <button class="btn-delete" onclick="deleteHistoryItem(${index})">
+                                <i class="fas fa-trash me-1"></i>
+                                Usuń
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Filtrowanie historii
+        function filterHistory() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const items = document.querySelectorAll('.history-item');
+
+            items.forEach(item => {
+                const cable = item.dataset.cable.toLowerCase();
+                const length = item.dataset.length;
+                const isVisible = cable.includes(searchTerm) || length.includes(searchTerm);
+                
+                item.style.display = isVisible ? 'block' : 'none';
+            });
+        }
+
+        // Powtórz obliczenie
+        function repeatCalculation(nazwa, przekroj, dlugosc) {
+            const params = new URLSearchParams({
+                nazwa_kabla: nazwa,
+                liczba_przekroj: przekroj,
+                dlugosc_kabla: dlugosc
+            });
+            
+            window.location.href = '/?' + params.toString();
+        }
+
+        // Usuń element z historii
+        function deleteHistoryItem(index) {
+            if (confirm('Czy na pewno chcesz usunąć ten element z historii?')) {
+                let history = JSON.parse(localStorage.getItem('calculationHistory') || '[]');
+                history.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                history.splice(index, 1);
+                localStorage.setItem('calculationHistory', JSON.stringify(history));
+                loadHistory();
+            }
+        }
+
+        // Wyczyść całą historię
+        function clearAllHistory() {
+            if (confirm('Czy na pewno chcesz wyczyścić całą historię obliczeń?')) {
+                localStorage.removeItem('calculationHistory');
+                loadHistory();
+            }
+        }
+
+        // Załaduj historię przy starcie
+        document.addEventListener('DOMContentLoaded', loadHistory);
+    </script>
 </body>
 </html>
