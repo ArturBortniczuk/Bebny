@@ -226,6 +226,39 @@
             border-radius: 5px;
         }
 
+        .cable-info-section {
+            background: rgba(0, 102, 204, 0.05);
+            border: 1px solid rgba(0, 102, 204, 0.2);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .cable-info-title {
+            color: var(--dark-blue);
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+        }
+
+        .cable-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .cable-info-grid > div {
+            padding: 0.5rem;
+            background: white;
+            border-radius: 5px;
+            border: 1px solid rgba(0, 102, 204, 0.1);
+        }
+
+        .cable-info-grid strong {
+            color: var(--dark-blue);
+        }
+
         .loading {
             opacity: 0.7;
             pointer-events: none;
@@ -292,6 +325,16 @@
                             Wynik obliczeń
                         </div>
                         <div class="result-content">
+                            <!-- Informacje o kablu -->
+                            <div class="cable-info-section">
+                                <h6 class="cable-info-title">Obliczenia dla kabla:</h6>
+                                <div class="cable-info-grid">
+                                    <div><strong>Typ kabla:</strong> {{ wynik_data.nazwa_kabla }}</div>
+                                    <div><strong>Przekrój żył:</strong> {{ wynik_data.przekroj }}</div>
+                                    <div><strong>Długość:</strong> {{ wynik_data.dlugosc }} m</div>
+                                </div>
+                            </div>
+                            
                             <!-- Kluczowe informacje -->
                             <div class="row mb-4">
                                 <div class="col-md-6">
