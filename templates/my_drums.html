@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moje bębny - Grupa Eltron</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0066cc, #3399ff);
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: 0 2px 10px rgba(0,102,204,0.2);
+        }
+
+        .navbar-nav .nav-link {
+            color: white !important;
+            font-weight: 500;
+            transition: all 0.3s;
+            border-radius: 5px;
+            margin: 0 0.25rem;
+        }
+
+        .navbar-nav .nav-link:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-1px);
+        }
+
+        .navbar-nav .nav-link.active {
+            background: rgba(255,255,255,0.2);
+            font-weight: 600;
+        }
+
+        .btn-logout {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: linear-gradient(135deg, #c82333, #a71e2a);
+            color: white;
+        }
+
+        .page-title {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            border-left: 5px solid #0066cc;
+        }
+
+        .page-title h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0066cc;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-title p {
+            color: #666;
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .filters-section {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+        }
+
+        .search-input {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            border-color: #0066cc;
+            box-shadow: 0 0 0 0.2rem rgba(0,102,204,0.25);
+            outline: none;
+        }
+
+        .filter-btn {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            color: #495057;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+            cursor: pointer;
+            margin: 0.25rem;
+        }
+
+        .filter-btn.active {
+            background: #0066cc;
+            border-color: #0066cc;
+            color: white;
+        }
+
+        .filter-btn:hover {
+            border-color: #0066cc;
+            color: #0066cc;
+        }
+
+        .drums-container {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+        }
+
+        .drum-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #0066cc;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .drum-card:hover {
+            background: #e3f2fd;
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0,102,204,0.15);
+        }
+
+        .drum-header {
+            display: flex;
+            justify-content: between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .drum-code {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #0066cc;
+            margin-bottom: 0.25rem;
+        }
+
+        .drum-name {
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .drum-feature {
+            background: rgba(0,102,204,0.1);
+            color: #004499;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .drum-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.95rem;
+        }
+
+        .detail-item i {
+            color: #0066cc;
+            width: 20px;
+            margin-right: 0.75rem;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #495057;
+            margin-right: 0.5rem;
+        }
+
+        .detail-value {
+            color: #333;
+        }
+
+        .return-date {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            border: 2px solid #e9ecef;
+            margin-top: 1rem;
+        }
+
+        .return-date.overdue {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+
+        .return-date.warning {
+            border-color: #fd7e14;
+            background: #fff3cd;
+        }
+
+        .return-date.ok {
+            border-color: #28a745;
+            background: #d1e7dd;
+        }
+
+        .return-date-label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .return-date-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .return-date.overdue .return-date-label,
+        .return-date.overdue .return-date-value {
+            color: #721c24;
+        }
+
+        .return-date.warning .return-date-label,
+        .return-date.warning .return-date-value {
+            color: #664d03;
+        }
+
+        .return-date.ok .return-date-label,
+        .return-date.ok .return-date-value {
+            color: #0a3622;
+        }
+
+        .no-date {
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .status-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-borrowed {
+            background: #ffeaa7;
+            color: #2d3436;
+        }
+
+        .status-returned {
+            background: #00b894;
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: #dee2e6;
+            margin-bottom: 1rem;
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid #e9ecef;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0066cc;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .export-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .export-btn:hover {
+            background: linear-gradient(135deg, #218838, #1ca085);
+            transform: translateY(-1px);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem 0;
+            }
+
+            .page-title, .filters-section, .drums-container {
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .drum-card {
+                padding: 1.25rem;
+            }
+
+            .drum-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .status-badge {
+                position: static;
+                margin-top: 0.5rem;
+                align-self: flex-start;
+            }
+
+            .drum-details {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+
+            .summary-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Animacje */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg navbar-dark p-0">
+                <a class="navbar-brand fw-bold fs-4" href="{{ url_for('dashboard') }}">
+                    <i class="fas fa-drum me-2"></i>
+                    Grupa Eltron
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('dashboard') }}">
+                                <i class="fas fa-home me-1"></i>
+                                Panel główny
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="{{ url_for('my_drums') }}">
+                                <i class="fas fa-list me-1"></i>
+                                Moje bębny
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('calculator') }}">
+                                <i class="fas fa-calculator me-1"></i>
+                                Kalkulator
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn-logout ms-2" href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt me-1"></i>
+                                Wyloguj
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <!-- Page Title -->
+        <div class="page-title animate-fade-in">
+            <h1><i class="fas fa-list me-3"></i>Moje bębny</h1>
+            <p>Przegląd wszystkich Twoich bębnów z datami zwrotu i szczegółami</p>
+        </div>
+
+        <!-- Summary Statistics -->
+        <div class="summary-stats animate-fade-in" style="animation-delay: 0.1s;">
+            <div class="stat-card">
+                <div class="stat-number" id="totalDrums">{{ drums|length }}</div>
+                <div class="stat-label">Łącznie bębnów</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="overdueDrums">0</div>
+                <div class="stat-label">Przeterminowane</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="soonDrums">0</div>
+                <div class="stat-label">Do zwrotu w tym miesiącu</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="noDateDrums">0</div>
+                <div class="stat-label">Bez daty zwrotu</div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-section animate-fade-in" style="animation-delay: 0.2s;">
+            <div class="row align-items-end">
+                <div class="col-md-6 mb-3">
+                    <label for="searchInput" class="form-label fw-semibold">
+                        <i class="fas fa-search me-2"></i>Szukaj bębnów
+                    </label>
+                    <input type="text" 
+                           id="searchInput" 
+                           class="search-input form-control" 
+                           placeholder="Wpisz kod bębna, nazwę lub cechę..."
+                           onkeyup="filterDrums()">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-semibold">
+                        <i class="fas fa-filter me-2"></i>Filtruj według statusu
+                    </label>
+                    <div>
+                        <button class="filter-btn active" onclick="filterByStatus('all')">Wszystkie</button>
+                        <button class="filter-btn" onclick="filterByStatus('overdue')">Przeterminowane</button>
+                        <button class="filter-btn" onclick="filterByStatus('soon')">Do zwrotu</button>
+                        <button class="filter-btn" onclick="filterByStatus('nodate')">Bez daty</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-end">
+                <button class="export-btn" onclick="exportToCSV()">
+                    <i class="fas fa-download me-2"></i>
+                    Eksportuj do CSV
+                </button>
+            </div>
+        </div>
+
+        <!-- Drums List -->
+        <div class="drums-container animate-fade-in" style="animation-delay: 0.3s;">
+            <div id="drumsContainer">
+                {% if drums %}
+                    {% for drum in drums %}
+                        <div class="drum-card" 
+                             data-code="{{ drum.KOD_BEBNA|lower }}"
+                             data-name="{{ drum.NAZWA|lower }}"
+                             data-feature="{{ drum.CECHA|lower }}"
+                             data-return-date="{{ drum.DATA_ZWROTU_DO_DOSTAWCY or '' }}"
+                             data-status="{{ get_return_status(drum.DATA_ZWROTU_DO_DOSTAWCY) }}">
+                            
+                            <div class="drum-header">
+                                <div>
+                                    <div class="drum-code">{{ drum.KOD_BEBNA }}</div>
+                                    <div class="drum-name">{{ drum.NAZWA }}</div>
+                                    {% if drum.CECHA %}
+                                        <span class="drum-feature">{{ drum.CECHA }}</span>
+                                    {% endif %}
+                                </div>
+                                <div class="status-badge status-borrowed">Wypożyczony</div>
+                            </div>
+
+                            <div class="drum-details">
+                                <div class="detail-item">
+                                    <i class="fas fa-building"></i>
+                                    <span class="detail-label">Dostawca:</span>
+                                    <span class="detail-value">{{ drum.KON_DOSTAWCA or 'Brak danych' }}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-file-alt"></i>
+                                    <span class="detail-label">Dokument:</span>
+                                    <span class="detail-value">{{ drum.NR_DOKUMENTUPZ or 'Brak' }}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-calendar-plus"></i>
+                                    <span class="detail-label">Data wydania:</span>
+                                    <span class="detail-value">{{ drum.DATA_WYDANIA or 'Brak danych' }}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-clipboard-list"></i>
+                                    <span class="detail-label">Status:</span>
+                                    <span class="detail-value">{{ drum.STATUS or 'Brak danych' }}</span>
+                                </div>
+                            </div>
+
+                            <!-- Return Date Section -->
+                            {% if drum.DATA_ZWROTU_DO_DOSTAWCY %}
+                                {% set return_date = drum.DATA_ZWROTU_DO_DOSTAWCY %}
+                                {% set today = '2024-07-03' %}  <!-- Używamy dzisiejszej daty -->
+                                {% if return_date < today %}
+                                    <div class="return-date overdue">
+                                        <div class="return-date-label">
+                                            <i class="fas fa-exclamation-triangle me-2"></i>
+                                            PRZETERMINOWANY ZWROT
+                                        </div>
+                                        <div class="return-date-value">{{ return_date }}</div>
+                                    </div>
+                                {% elif return_date[:7] == today[:7] %}
+                                    <div class="return-date warning">
+                                        <div class="return-date-label">
+                                            <i class="fas fa-clock me-2"></i>
+                                            DO ZWROTU W TYM MIESIĄCU
+                                        </div>
+                                        <div class="return-date-value">{{ return_date }}</div>
+                                    </div>
+                                {% else %}
+                                    <div class="return-date ok">
+                                        <div class="return-date-label">
+                                            <i class="fas fa-calendar-check me-2"></i>
+                                            DATA ZWROTU
+                                        </div>
+                                        <div class="return-date-value">{{ return_date }}</div>
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                                <div class="return-date">
+                                    <div class="return-date-label">
+                                        <i class="fas fa-question-circle me-2"></i>
+                                        DATA ZWROTU
+                                    </div>
+                                    <div class="return-date-value no-date">Nie ustalono</div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <h4>Brak bębnów</h4>
+                        <p>Nie masz jeszcze żadnych bębnów w systemie.</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Filtrowane wyniki -->
+            <div id="noResults" style="display: none;">
+                <div class="empty-state">
+                    <i class="fas fa-search"></i>
+                    <h4>Brak wyników</h4>
+                    <p>Nie znaleziono bębnów spełniających kryteria wyszukiwania.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let allDrums = [];
+        let currentFilter = 'all';
+
+        // Inicjalizacja
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePage();
+            calculateStatistics();
+        });
+
+        function initializePage() {
+            // Zbierz wszystkie bębny do tablicy
+            const drumCards = document.querySelectorAll('.drum-card');
+            allDrums = Array.from(drumCards);
+
+            // Animacje wejścia
+            const elements = document.querySelectorAll('.animate-fade-in');
+            elements.forEach((element, index) => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    element.style.transition = 'all 0.6s ease';
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        }
+
+        function calculateStatistics() {
+            let total = allDrums.length;
+            let overdue = 0;
+            let soon = 0;
+            let noDate = 0;
+
+            allDrums.forEach(drum => {
+                const status = drum.dataset.status;
+                switch(status) {
+                    case 'overdue':
+                        overdue++;
+                        break;
+                    case 'soon':
+                        soon++;
+                        break;
+                    case 'nodate':
+                        noDate++;
+                        break;
+                }
+            });
+
+            // Aktualizuj statystyki
+            document.getElementById('totalDrums').textContent = total;
+            document.getElementById('overdueDrums').textContent = overdue;
+            document.getElementById('soonDrums').textContent = soon;
+            document.getElementById('noDateDrums').textContent = noDate;
+
+            // Animacja liczników
+            animateCounters();
+        }
+
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stat-number');
+            counters.forEach(counter => {
+                const target = parseInt(counter.textContent);
+                let current = 0;
+                const increment = target / 30;
+                
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        counter.textContent = target;
+                        clearInterval(timer);
+                    } else {
+                        counter.textContent = Math.ceil(current);
+                    }
+                }, 50);
+            });
+        }
+
+        function filterDrums() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            let visibleCount = 0;
+
+            allDrums.forEach(drum => {
+                const code = drum.dataset.code;
+                const name = drum.dataset.name;
+                const feature = drum.dataset.feature;
+                const status = drum.dataset.status;
+
+                const matchesSearch = code.includes(searchTerm) || 
+                                    name.includes(searchTerm) || 
+                                    feature.includes(searchTerm);
+
+                const matchesFilter = currentFilter === 'all' || 
+                                    (currentFilter === 'overdue' && status === 'overdue') ||
+                                    (currentFilter === 'soon' && status === 'soon') ||
+                                    (currentFilter === 'nodate' && status === 'nodate');
+
+                if (matchesSearch && matchesFilter) {
+                    drum.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    drum.style.display = 'none';
+                }
+            });
+
+            // Pokaż/ukryj komunikat o braku wyników
+            const noResults = document.getElementById('noResults');
+            if (visibleCount === 0 && allDrums.length > 0) {
+                noResults.style.display = 'block';
+            } else {
+                noResults.style.display = 'none';
+            }
+        }
+
+        function filterByStatus(status) {
+            currentFilter = status;
+
+            // Aktualizuj przyciski
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Zastosuj filtr
+            filterDrums();
+        }
+
+        function exportToCSV() {
+            const visibleDrums = allDrums.filter(drum => drum.style.display !== 'none');
+            
+            if (visibleDrums.length === 0) {
+                alert('Brak danych do eksportu');
+                return;
+            }
+
+            let csv = 'Kod bębna,Nazwa,Cecha,Data zwrotu,Status,Dostawca,Dokument,Data wydania\n';
+
+            visibleDrums.forEach(drum => {
+                const code = drum.querySelector('.drum-code').textContent;
+                const name = drum.querySelector('.drum-name').textContent;
+                const feature = drum.querySelector('.drum-feature')?.textContent || '';
+                const returnDate = drum.dataset.returnDate || 'Brak';
+                const status = drum.querySelector('.status-badge').textContent;
+                
+                // Pobierz szczegóły
+                const details = drum.querySelectorAll('.detail-value');
+                const supplier = details[0]?.textContent || '';
+                const document = details[1]?.textContent || '';
+                const issueDate = details[2]?.textContent || '';
+
+                csv += `"${code}","${name}","${feature}","${returnDate}","${status}","${supplier}","${document}","${issueDate}"\n`;
+            });
+
+            // Pobierz plik
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `moje_bebny_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey) {
+                switch(e.key) {
+                    case 'f':
+                        e.preventDefault();
+                        document.getElementById('searchInput').focus();
+                        break;
+                    case 's':
+                        e.preventDefault();
+                        exportToCSV();
+                        break;
+                }
+            }
+            
+            if (e.key === 'Escape') {
+                document.getElementById('searchInput').value = '';
+                filterDrums();
+            }
+        });
+
+        // Auto-highlight searched text
+        function highlightSearchText() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            if (!searchTerm) return;
+
+            allDrums.forEach(drum => {
+                if (drum.style.display !== 'none') {
+                    const elements = [
+                        drum.querySelector('.drum-code'),
+                        drum.querySelector('.drum-name'),
+                        drum.querySelector('.drum-feature')
+                    ].filter(el => el);
+
+                    elements.forEach(el => {
+                        const text = el.textContent;
+                        if (text.toLowerCase().includes(searchTerm)) {
+                            const regex = new RegExp(`(${searchTerm})`, 'gi');
+                            el.innerHTML = text.replace(regex, '<mark>$1</mark>');
+                        }
+                    });
+                }
+            });
+        }
+
+        // Ustaw status bębnów na podstawie daty zwrotu
+        function setDrumStatuses() {
+            const today = '2024-07-03'; // Obecna data
+            
+            allDrums.forEach(drum => {
+                const returnDate = drum.dataset.returnDate;
+                let status = 'nodate';
+                
+                if (returnDate) {
+                    if (returnDate < today) {
+                        status = 'overdue';
+                    } else if (returnDate.substring(0, 7) === today.substring(0, 7)) {
+                        status = 'soon';
+                    } else {
+                        status = 'ok';
+                    }
+                }
+                
+                drum.dataset.status = status;
+            });
+        }
+
+        // Inicjalizuj statusy
+        setDrumStatuses();
+    </script>
+</body>
+</html>
