@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator bębnów - Grupa Eltron</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0066cc, #3399ff);
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: 0 2px 10px rgba(0,102,204,0.2);
+        }
+
+        .navbar-nav .nav-link {
+            color: white !important;
+            font-weight: 500;
+            transition: all 0.3s;
+            border-radius: 5px;
+            margin: 0 0.25rem;
+        }
+
+        .navbar-nav .nav-link:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-1px);
+        }
+
+        .navbar-nav .nav-link.active {
+            background: rgba(255,255,255,0.2);
+            font-weight: 600;
+        }
+
+        .btn-logout {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: linear-gradient(135deg, #c82333, #a71e2a);
+            color: white;
+        }
+
+        .page-title {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            border-left: 5px solid #0066cc;
+        }
+
+        .page-title h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0066cc;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-title p {
+            color: #666;
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .calculator-card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 15px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #0066cc;
+            box-shadow: 0 0 0 0.2rem rgba(0,102,204,0.25);
+        }
+
+        .searchable-select {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+        }
+
+        .search-input:focus {
+            border-color: #0066cc;
+            box-shadow: 0 0 0 0.2rem rgba(0,102,204,0.25);
+            outline: none;
+        }
+
+        .dropdown-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid #0066cc;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid #e9ecef;
+            transition: background 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .btn-calculate {
+            background: linear-gradient(135deg, #0066cc, #3399ff);
+            border: none;
+            color: white;
+            padding: 0.875rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .btn-calculate:hover {
+            background: linear-gradient(135deg, #004499, #0066cc);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(0,102,204,0.3);
+        }
+
+        .result-box {
+            background: linear-gradient(135deg, #e8f5e8, #f0f8f0);
+            border: 2px solid #28a745;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 2rem;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .result-title {
+            color: #28a745;
+            font-weight: 700;
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .result-content {
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .cable-info-section {
+            background: rgba(0, 102, 204, 0.05);
+            border: 1px solid rgba(0, 102, 204, 0.2);
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .cable-info-title {
+            color: #0066cc;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .cable-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .cable-info-grid > div {
+            padding: 0.75rem;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 102, 204, 0.1);
+        }
+
+        .cable-info-grid strong {
+            color: #0066cc;
+        }
+
+        .key-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .key-result {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(0, 102, 204, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(0, 102, 204, 0.2);
+            transition: all 0.3s;
+        }
+
+        .key-result:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,102,204,0.15);
+        }
+
+        .key-label {
+            font-size: 0.9rem;
+            color: #0066cc;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .key-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #0066cc;
+        }
+
+        .details-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid rgba(0, 102, 204, 0.2);
+        }
+
+        .details-title {
+            color: #0066cc;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .details-grid > div {
+            padding: 1rem;
+            background: rgba(248, 249, 250, 0.8);
+            border-radius: 8px;
+            border-left: 4px solid #0066cc;
+        }
+
+        .details-grid strong {
+            color: #0066cc;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .save-calculation {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+
+        .save-calculation:hover {
+            background: linear-gradient(135deg, #218838, #1ca085);
+            transform: translateY(-1px);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .page-title, .calculator-card {
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .key-results {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+
+            .key-value {
+                font-size: 1.4rem;
+            }
+
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg navbar-dark p-0">
+                <a class="navbar-brand fw-bold fs-4" href="{{ url_for('dashboard') }}">
+                    <i class="fas fa-drum me-2"></i>
+                    Grupa Eltron
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('dashboard') }}">
+                                <i class="fas fa-home me-1"></i>
+                                Panel główny
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('my_drums') }}">
+                                <i class="fas fa-list me-1"></i>
+                                Moje bębny
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="{{ url_for('calculator') }}">
+                                <i class="fas fa-calculator me-1"></i>
+                                Kalkulator
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn-logout ms-2" href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt me-1"></i>
+                                Wyloguj
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <!-- Page Title -->
+        <div class="page-title animate-fade-in">
+            <h1><i class="fas fa-calculator me-3"></i>Kalkulator bębnów</h1>
+            <p>Oblicz optymalne parametry bębna dla swojego kabla</p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="calculator-card animate-fade-in" style="animation-delay: 0.1s;">
+                    <!-- Wyniki obliczeń -->
+                    {% if wynik_data %}
+                    <div class="result-box">
+                        <div class="result-title">
+                            <i class="fas fa-check-circle me-3"></i>
+                            Wynik obliczeń
+                        </div>
+                        <div class="result-content">
+                            <!-- Informacje o kablu -->
+                            <div class="cable-info-section">
+                                <h6 class="cable-info-title">
+                                    <i class="fas fa-plug me-2"></i>
+                                    Obliczenia dla kabla:
+                                </h6>
+                                <div class="cable-info-grid">
+                                    <div><strong>Typ kabla:</strong> {{ wynik_data.nazwa_kabla }}</div>
+                                    <div><strong>Przekrój żył:</strong> {{ wynik_data.przekroj }}</div>
+                                    <div><strong>Długość:</strong> {{ wynik_data.dlugosc }} m</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Kluczowe wyniki -->
+                            <div class="key-results">
+                                <div class="key-result">
+                                    <div class="key-label">Średnica bębna</div>
+                                    <div class="key-value">{{ wynik_data.srednica_bebna }} cm</div>
+                                </div>
+                                <div class="key-result">
+                                    <div class="key-label">Łączna masa</div>
+                                    <div class="key-value">{{ "%.1f"|format(wynik_data.laczna_masa) }} kg</div>
+                                </div>
+                                <div class="key-result">
+                                    <div class="key-label">Wykorzystanie</div>
+                                    <div class="key-value">{{ "%.1f"|format(wynik_data.szczegoly.wykorzystanie_procent) }}%</div>
+                                </div>
+                                <div class="key-result">
+                                    <div class="key-label">Liczba warstw</div>
+                                    <div class="key-value">{{ wynik_data.szczegoly.liczba_warstw }}</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Szczegółowe informacje -->
+                            <div class="details-section">
+                                <h6 class="details-title">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Szczegóły bębna:
+                                </h6>
+                                <div class="details-grid">
+                                    <div>
+                                        <strong>Szerokość bębna</strong>
+                                        {{ wynik_data.szczegoly.beben.szerokość }} cm
+                                    </div>
+                                    <div>
+                                        <strong>Średnica wewnętrzna</strong>
+                                        {{ wynik_data.szczegoly.beben['średnica wewnętrzna'] }} cm
+                                    </div>
+                                    <div>
+                                        <strong>Masa kabla</strong>
+                                        {{ "%.1f"|format(wynik_data.szczegoly.masa_kabla) }} kg
+                                    </div>
+                                    <div>
+                                        <strong>Masa bębna</strong>
+                                        {{ wynik_data.szczegoly.masa_bębna }} kg
+                                    </div>
+                                    <div>
+                                        <strong>Maksymalna długość</strong>
+                                        {{ "%.1f"|format(wynik_data.szczegoly.max_dlugosc) }} m
+                                    </div>
+                                    <div>
+                                        <strong>Status</strong>
+                                        <span style="color: #28a745; font-weight: 600;">Optymalne rozwiązanie</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Przycisk zapisu do historii -->
+                            <div class="text-center">
+                                <button class="save-calculation" onclick="saveCalculation()">
+                                    <i class="fas fa-save me-2"></i>
+                                    Zapisz obliczenie
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Formularz kalkulatora -->
+                    <form action="/oblicz" method="POST" id="calculatorForm">
+                        <div class="mb-4">
+                            <label for="nazwa_kabla" class="form-label">
+                                <i class="fas fa-plug me-2 text-primary"></i>
+                                Typ kabla
+                            </label>
+                            <div class="searchable-select">
+                                <input type="text" 
+                                       id="cable_search" 
+                                       class="search-input" 
+                                       placeholder="Wpisz lub wybierz typ kabla..."
+                                       autocomplete="off"
+                                       onclick="showAllCables()"
+                                       onfocus="showAllCables()">
+                                <input type="hidden" id="nazwa_kabla" name="nazwa_kabla" required>
+                                <div id="cable_dropdown" class="dropdown-list"></div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="liczba_przekroj" class="form-label">
+                                <i class="fas fa-layer-group me-2 text-primary"></i>
+                                Liczba i przekrój żył
+                            </label>
+                            <div class="searchable-select">
+                                <input type="text" 
+                                       id="section_search" 
+                                       class="search-input" 
+                                       placeholder="Najpierw wybierz typ kabla"
+                                       autocomplete="off"
+                                       onclick="showAllSections()"
+                                       onfocus="showAllSections()"
+                                       disabled>
+                                <input type="hidden" id="liczba_przekroj" name="liczba_przekroj" required>
+                                <div id="section_dropdown" class="dropdown-list"></div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="dlugosc_kabla" class="form-label">
+                                <i class="fas fa-ruler me-2 text-primary"></i>
+                                Długość kabla (metry)
+                            </label>
+                            <input type="number" 
+                                   id="dlugosc_kabla" 
+                                   name="dlugosc_kabla" 
+                                   class="form-control" 
+                                   required 
+                                   min="1" 
+                                   max="10000" 
+                                   step="0.1"
+                                   placeholder="Wprowadź długość kabla w metrach">
+                        </div>
+
+                        <button type="submit" class="btn-calculate" id="submitBtn">
+                            <span id="btnText">
+                                <i class="fas fa-calculator me-2"></i>
+                                Oblicz parametry bębna
+                            </span>
+                            <span id="btnLoading" style="display: none;">
+                                <span class="spinner"></span>
+                                Obliczanie...
+                            </span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const opcjeKabli = {{ opcje_kabli|tojson }};
+        const allCableTypes = Object.keys(opcjeKabli);
+        let currentSections = [];
+
+        // Cable search functionality
+        const cableSearch = document.getElementById('cable_search');
+        const cableDropdown = document.getElementById('cable_dropdown');
+        const cableHidden = document.getElementById('nazwa_kabla');
+
+        const sectionSearch = document.getElementById('section_search');
+        const sectionDropdown = document.getElementById('section_dropdown');
+        const sectionHidden = document.getElementById('liczba_przekroj');
+
+        // Inicializacja strony
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animacje wejścia
+            const elements = document.querySelectorAll('.animate-fade-in');
+            elements.forEach((element, index) => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    element.style.transition = 'all 0.6s ease';
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+
+        // Show all cables on focus/click
+        function showAllCables() {
+            displayDropdown(cableDropdown, allCableTypes, (item) => {
+                cableSearch.value = item;
+                cableHidden.value = item;
+                cableDropdown.style.display = 'none';
+                
+                // Enable section search and load sections
+                currentSections = opcjeKabli[item] || [];
+                sectionSearch.disabled = false;
+                sectionSearch.placeholder = 'Wpisz lub wybierz przekrój...';
+                sectionSearch.value = '';
+                sectionHidden.value = '';
+                sectionDropdown.style.display = 'none';
+            });
+        }
+
+        // Show all sections on focus/click
+        function showAllSections() {
+            if (currentSections.length > 0) {
+                displayDropdown(sectionDropdown, currentSections, (item) => {
+                    sectionSearch.value = item;
+                    sectionHidden.value = item;
+                    sectionDropdown.style.display = 'none';
+                });
+            }
+        }
+
+        // Filter and display cable options
+        function filterCables(searchTerm) {
+            if (searchTerm === '') {
+                displayDropdown(cableDropdown, allCableTypes, (item) => {
+                    cableSearch.value = item;
+                    cableHidden.value = item;
+                    cableDropdown.style.display = 'none';
+                    
+                    // Enable section search and load sections
+                    currentSections = opcjeKabli[item] || [];
+                    sectionSearch.disabled = false;
+                    sectionSearch.placeholder = 'Wpisz lub wybierz przekrój...';
+                    sectionSearch.value = '';
+                    sectionHidden.value = '';
+                    sectionDropdown.style.display = 'none';
+                });
+            } else {
+                const filtered = allCableTypes.filter(cable => 
+                    cable.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+                
+                displayDropdown(cableDropdown, filtered, (item) => {
+                    cableSearch.value = item;
+                    cableHidden.value = item;
+                    cableDropdown.style.display = 'none';
+                    
+                    // Enable section search and load sections
+                    currentSections = opcjeKabli[item] || [];
+                    sectionSearch.disabled = false;
+                    sectionSearch.placeholder = 'Wpisz lub wybierz przekrój...';
+                    sectionSearch.value = '';
+                    sectionHidden.value = '';
+                });
+            }
+        }
+
+        // Filter and display section options
+        function filterSections(searchTerm) {
+            if (searchTerm === '') {
+                displayDropdown(sectionDropdown, currentSections, (item) => {
+                    sectionSearch.value = item;
+                    sectionHidden.value = item;
+                    sectionDropdown.style.display = 'none';
+                });
+            } else {
+                const filtered = currentSections.filter(section => 
+                    section.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+                
+                displayDropdown(sectionDropdown, filtered, (item) => {
+                    sectionSearch.value = item;
+                    sectionHidden.value = item;
+                    sectionDropdown.style.display = 'none';
+                });
+            }
+        }
+
+        // Generic dropdown display function
+        function displayDropdown(dropdown, items, onSelect) {
+            dropdown.innerHTML = '';
+            
+            if (items.length === 0) {
+                const div = document.createElement('div');
+                div.className = 'dropdown-item';
+                div.textContent = 'Brak wyników';
+                div.style.opacity = '0.5';
+                div.style.cursor = 'default';
+                dropdown.appendChild(div);
+                dropdown.style.display = 'block';
+                return;
+            }
+
+            // Limit to first 10 results for performance
+            const limitedItems = items.slice(0, 10);
+            
+            limitedItems.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'dropdown-item';
+                div.textContent = item;
+                div.onclick = () => onSelect(item);
+                dropdown.appendChild(div);
+            });
+
+            // Show "więcej wyników" if there are more items
+            if (items.length > 10) {
+                const div = document.createElement('div');
+                div.className = 'dropdown-item';
+                div.textContent = `... i ${items.length - 10} więcej. Kontynuuj pisanie aby zawęzić.`;
+                div.style.opacity = '0.7';
+                div.style.fontStyle = 'italic';
+                div.style.cursor = 'default';
+                dropdown.appendChild(div);
+            }
+
+            dropdown.style.display = 'block';
+        }
+
+        // Event listeners
+        cableSearch.addEventListener('input', (e) => {
+            const value = e.target.value;
+            filterCables(value);
+            
+            // Clear hidden value if typing (not selecting)
+            if (cableHidden.value !== value) {
+                cableHidden.value = '';
+                // Reset section search
+                sectionSearch.disabled = true;
+                sectionSearch.value = '';
+                sectionSearch.placeholder = 'Najpierw wybierz typ kabla';
+                sectionHidden.value = '';
+                sectionDropdown.style.display = 'none';
+            }
+        });
+
+        sectionSearch.addEventListener('input', (e) => {
+            const value = e.target.value;
+            if (currentSections.length > 0) {
+                filterSections(value);
+            }
+            
+            // Clear hidden value if typing (not selecting)
+            if (sectionHidden.value !== value) {
+                sectionHidden.value = '';
+            }
+        });
+
+        // Hide dropdowns when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.searchable-select')) {
+                cableDropdown.style.display = 'none';
+                sectionDropdown.style.display = 'none';
+            }
+        });
+
+        // Form submission
+        document.getElementById('calculatorForm').addEventListener('submit', function(e) {
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const btnLoading = document.getElementById('btnLoading');
+            
+            const nazwa = cableHidden.value;
+            const przekroj = sectionHidden.value;
+            const dlugosc = document.getElementById('dlugosc_kabla').value;
+            
+            if (!nazwa || !przekroj || !dlugosc) {
+                e.preventDefault();
+                alert('Proszę wypełnić wszystkie pola!');
+                return;
+            }
+            
+            if (parseFloat(dlugosc) <= 0 || parseFloat(dlugosc) > 10000) {
+                e.preventDefault();
+                alert('Długość kabla musi być między 1 a 10000 metrów!');
+                return;
+            }
+
+            // Show loading state
+            btnText.style.display = 'none';
+            btnLoading.style.display = 'inline';
+            submitBtn.disabled = true;
+        });
+
+        // Zapisz obliczenie do localStorage
+        function saveCalculation() {
+            {% if wynik_data %}
+            const calculationData = {
+                nazwa_kabla: "{{ wynik_data.nazwa_kabla }}",
+                przekroj: "{{ wynik_data.przekroj }}",
+                dlugosc: {{ wynik_data.dlugosc }},
+                wynik: {
+                    beben: {
+                        'Średnica': {{ wynik_data.srednica_bebna }},
+                        'szerokość': {{ wynik_data.szczegoly.beben.szerokość }},
+                        'średnica wewnętrzna': {{ wynik_data.szczegoly.beben['średnica wewnętrzna'] }},
+                        'Waga': {{ wynik_data.szczegoly.masa_bębna }}
+                    },
+                    masa_kabla: {{ wynik_data.szczegoly.masa_kabla }},
+                    masa_bębna: {{ wynik_data.szczegoly.masa_bębna }},
+                    suma_wag: {{ wynik_data.laczna_masa }},
+                    wykorzystanie_procent: {{ wynik_data.szczegoly.wykorzystanie_procent }},
+                    liczba_warstw: {{ wynik_data.szczegoly.liczba_warstw }}
+                },
+                timestamp: new Date().toISOString()
+            };
+            
+            let history = JSON.parse(localStorage.getItem('calculationHistory') || '[]');
+            history.push(calculationData);
+            
+            // Zachowaj tylko ostatnie 50 obliczeń
+            history = history.slice(-50);
+            
+            localStorage.setItem('calculationHistory', JSON.stringify(history));
+            
+            // Pokaż potwierdzenie
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check me-2"></i>Zapisano!';
+            button.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
+            
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.style.background = '';
+            }, 2000);
+            {% endif %}
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                document.getElementById('calculatorForm').submit();
+            }
+            
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                {% if wynik_data %}
+                saveCalculation();
+                {% endif %}
+            }
+        });
+
+        // Auto-scroll do wyników po obliczeniu
+        {% if wynik_data %}
+        setTimeout(() => {
+            const resultBox = document.querySelector('.result-box');
+            if (resultBox) {
+                resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 500);
+        {% endif %}
+    </script>
+</body>
+</html>
