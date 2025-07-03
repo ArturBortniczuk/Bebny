@@ -1,17 +1,12 @@
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for, flash
+from flask import Flask, render_template, request, jsonify
 import openpyxl
 import math
 import os
 import json
 import logging
-import hashlib
-import secrets
-from datetime import datetime, timedelta
-from functools import wraps
+from datetime import datetime
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY', 'your-secret-key-change-in-production')
-app.permanent_session_lifetime = timedelta(hours=8)  # Sesja na 8 godzin
 
 # Konfiguracja logowania
 logging.basicConfig(level=logging.INFO)
@@ -23,157 +18,6 @@ excel_data_cache = {}
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(BASE_DIR, 'wszystkiekable.xlsx')
 
-# Ścieżka do pliku z danymi klientów i bębnów
-CLIENTS_DATA_FILE = os.path.join(BASE_DIR, 'clients_data.json')
-PASSWORDS_FILE = os.path.join(BASE_DIR, 'client_passwords.json')
-
-def init_mock_data():
-    """Inicializuje mock data jeśli nie istnieją"""
-    
-    # Mock data dla klientów i bębnów
-    mock_clients_data = [
-        {
-            "KOD_BEBNA": "BEB001",
-            "NAZWA": "Bęben stalowy 200cm",
-            "CECHA": "Standardowy",
-            "DATA_ZWROTU_DO_DOSTAWCY": "2024-12-15",
-            "KON_DOSTAWCA": "DOSTAWCA_A",
-            "PELNA_NAZWA_KONTRAHENTA": "ELEKTRO-BUD Sp. z o.o.",
-            "NIP": "1234567890",
-            "TYP_DOK": "WZ",
-            "NR_DOKUMENTUPZ": "WZ/2024/001",
-            "Data_przyjęcia_na_stan": "2024-01-15",
-            "KONTRAHENT": "ELEKTRO-BUD",
-            "STATUS": "Wypożyczony",
-            "DATA_WYDANIA": "2024-01-15"
-        },
-        {
-            "KOD_BEBNA": "BEB002",
-            "NAZWA": "Bęben stalowy 180cm",
-            "CECHA": "Wzmocniony",
-            "DATA_ZWROTU_DO_DOSTAWCY": "2024-11-20",
-            "KON_DOSTAWCA": "DOSTAWCA_B",
-            "PELNA_NAZWA_KONTRAHENTA": "ELEKTRO-BUD Sp. z o.o.",
-            "NIP": "1234567890",
-            "TYP_DOK": "WZ",
-            "NR_DOKUMENTUPZ": "WZ/2024/002",
-            "Data_przyjęcia_na_stan": "2024-02-01",
-            "KONTRAHENT": "ELEKTRO-BUD",
-            "STATUS": "Wypożyczony",
-            "DATA_WYDANIA": "2024-02-01"
-        },
-        {
-            "KOD_BEBNA": "BEB003",
-            "NAZWA": "Bęben drewniany 150cm",
-            "CECHA": "Ekologiczny",
-            "DATA_ZWROTU_DO_DOSTAWCY": "2024-10-30",
-            "KON_DOSTAWCA": "DOSTAWCA_A",
-            "PELNA_NAZWA_KONTRAHENTA": "TECH-ELEKTRO S.A.",
-            "NIP": "9876543210",
-            "TYP_DOK": "WZ",
-            "NR_DOKUMENTUPZ": "WZ/2024/003",
-            "Data_przyjęcia_na_stan": "2024-03-10",
-            "KONTRAHENT": "TECH-ELEKTRO",
-            "STATUS": "Wypożyczony",
-            "DATA_WYDANIA": "2024-03-10"
-        },
-        {
-            "KOD_BEBNA": "BEB004",
-            "NAZWA": "Bęben stalowy 220cm",
-            "CECHA": "Duży",
-            "DATA_ZWROTU_DO_DOSTAWCY": "2024-12-01",
-            "KON_DOSTAWCA": "DOSTAWCA_C",
-            "PELNA_NAZWA_KONTRAHENTA": "TECH-ELEKTRO S.A.",
-            "NIP": "9876543210",
-            "TYP_DOK": "WZ",
-            "NR_DOKUMENTUPZ": "WZ/2024/004",
-            "Data_przyjęcia_na_stan": "2024-01-20",
-            "KONTRAHENT": "TECH-ELEKTRO",
-            "STATUS": "Wypożyczony",
-            "DATA_WYDANIA": "2024-01-20"
-        }
-    ]
-    
-    if not os.path.exists(CLIENTS_DATA_FILE):
-        with open(CLIENTS_DATA_FILE, 'w', encoding='utf-8') as f:
-            json.dump(mock_clients_data, f, ensure_ascii=False, indent=2)
-        logging.info("Utworzono plik z danymi klientów")
-    
-    if not os.path.exists(PASSWORDS_FILE):
-        with open(PASSWORDS_FILE, 'w', encoding='utf-8') as f:
-            json.dump({}, f, ensure_ascii=False, indent=2)
-        logging.info("Utworzono plik z hasłami klientów")
-
-def load_clients_data():
-    """Ładuje dane klientów z pliku JSON"""
-    try:
-        with open(CLIENTS_DATA_FILE, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except FileNotFoundError:
-        init_mock_data()
-        return load_clients_data()
-    except Exception as e:
-        logging.error(f"Błąd ładowania danych klientów: {e}")
-        return []
-
-def load_passwords():
-    """Ładuje hasła klientów z pliku JSON"""
-    try:
-        with open(PASSWORDS_FILE, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except FileNotFoundError:
-        return {}
-    except Exception as e:
-        logging.error(f"Błąd ładowania haseł: {e}")
-        return {}
-
-def save_passwords(passwords):
-    """Zapisuje hasła klientów do pliku JSON"""
-    try:
-        with open(PASSWORDS_FILE, 'w', encoding='utf-8') as f:
-            json.dump(passwords, f, ensure_ascii=False, indent=2)
-        return True
-    except Exception as e:
-        logging.error(f"Błąd zapisywania haseł: {e}")
-        return False
-
-def hash_password(password):
-    """Haszuje hasło używając SHA-256"""
-    return hashlib.sha256(password.encode()).hexdigest()
-
-def verify_password(password, hashed):
-    """Weryfikuje hasło"""
-    return hash_password(password) == hashed
-
-def login_required(f):
-    """Dekorator wymagający logowania"""
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if 'nip' not in session:
-            return redirect(url_for('login'))
-        return f(*args, **kwargs)
-    return decorated_function
-
-def get_client_by_nip(nip):
-    """Pobiera dane klienta po NIP"""
-    clients_data = load_clients_data()
-    for client in clients_data:
-        if client.get('NIP') == nip:
-            return client
-    return None
-
-def get_client_drums(nip):
-    """Pobiera bębny klienta po NIP"""
-    clients_data = load_clients_data()
-    client_drums = []
-    
-    for item in clients_data:
-        if item.get('NIP') == nip:
-            client_drums.append(item)
-    
-    return client_drums
-
-# Istniejące funkcje kalkulatora (load_excel_data, etc.)
 def load_excel_data():
     """Ładuje dane z pliku Excel z cache'owaniem (bez pandas)"""
     global excel_data_cache
@@ -208,9 +52,7 @@ def load_excel_data():
             logging.info("Dane Excel załadowane pomyślnie")
         except Exception as e:
             logging.error(f"Błąd ładowania danych Excel: {e}")
-            # Użyj pustych danych jeśli Excel nie istnieje
-            excel_data_cache['kable_data'] = []
-            excel_data_cache['bebny_data'] = []
+            raise
     
     return excel_data_cache['kable_data'], excel_data_cache['bebny_data']
 
@@ -230,7 +72,6 @@ def get_kable_options():
     
     return opcje_kabli
 
-# Reszta funkcji kalkulatora (validate_input_data, calculate_cable_on_drum, etc.)
 def validate_input_data(nazwa_kabla, liczba_przekroj, dlugosc_kabla):
     """Waliduje dane wejściowe"""
     errors = []
@@ -302,126 +143,64 @@ def find_suitable_drums(srednica_kabla, promien_giecia, dlugosc_kabla, bebny_dat
     
     return sorted(odpowiednie_bebny, key=lambda x: x['suma_wag'])
 
-# Routes
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    """Strona logowania"""
-    if request.method == 'POST':
-        nip = request.form.get('nip', '').strip()
-        password = request.form.get('password', '').strip()
-        
-        if not nip:
-            flash('Proszę wprowadzić NIP', 'error')
-            return render_template('login.html')
-        
-        # Sprawdź czy klient istnieje
-        client = get_client_by_nip(nip)
-        if not client:
-            flash('Nie znaleziono klienta o podanym NIP', 'error')
-            return render_template('login.html')
-        
-        passwords = load_passwords()
-        
-        # Sprawdź czy hasło jest już ustawione
-        if nip not in passwords:
-            # Pierwsze logowanie - pozwól ustawić hasło
-            if not password:
-                flash('Pierwsze logowanie - ustaw hasło dla swojego konta', 'info')
-                return render_template('login.html', nip=nip, first_login=True)
-            
-            # Zapisz nowe hasło
-            passwords[nip] = hash_password(password)
-            if save_passwords(passwords):
-                session.permanent = True
-                session['nip'] = nip
-                session['company_name'] = client['PELNA_NAZWA_KONTRAHENTA']
-                flash('Hasło zostało ustawione. Zostałeś zalogowany.', 'success')
-                return redirect(url_for('dashboard'))
-            else:
-                flash('Błąd podczas zapisywania hasła', 'error')
-                return render_template('login.html')
-        
-        # Logowanie z istniejącym hasłem
-        if not password:
-            flash('Proszę wprowadzić hasło', 'error')
-            return render_template('login.html', nip=nip)
-        
-        if verify_password(password, passwords[nip]):
-            session.permanent = True
-            session['nip'] = nip
-            session['company_name'] = client['PELNA_NAZWA_KONTRAHENTA']
-            flash('Zalogowano pomyślnie', 'success')
-            return redirect(url_for('dashboard'))
-        else:
-            flash('Nieprawidłowe hasło', 'error')
-            return render_template('login.html', nip=nip)
+def save_calculation_history(calculation_data):
+    """Zapisuje historię obliczeń do pliku JSON"""
+    history_file = os.path.join(BASE_DIR, 'calculation_history.json')
     
-    return render_template('login.html')
-
-@app.route('/logout')
-def logout():
-    """Wylogowanie"""
-    session.clear()
-    flash('Zostałeś wylogowany', 'info')
-    return redirect(url_for('login'))
-
-@app.route('/dashboard')
-@login_required
-def dashboard():
-    """Panel główny klienta"""
-    nip = session['nip']
-    company_name = session['company_name']
-    
-    # Pobierz bębny klienta
-    drums = get_client_drums(nip)
-    
-    # Statystyki
-    total_drums = len(drums)
-    drums_with_return_date = len([d for d in drums if d.get('DATA_ZWROTU_DO_DOSTAWCY')])
-    
-    return render_template('dashboard.html', 
-                         drums=drums,
-                         company_name=company_name,
-                         total_drums=total_drums,
-                         drums_with_return_date=drums_with_return_date)
-
-@app.route('/my-drums')
-@login_required
-def my_drums():
-    """Strona z bębnami klienta"""
-    nip = session['nip']
-    drums = get_client_drums(nip)
-    
-    # Sortuj po dacie zwrotu
-    drums_sorted = sorted(drums, 
-                         key=lambda x: x.get('DATA_ZWROTU_DO_DOSTAWCY', '9999-12-31'))
-    
-    return render_template('my_drums.html', drums=drums_sorted)
-
-@app.route('/calculator')
-@login_required
-def calculator():
-    """Kalkulator bębnów (dla zalogowanych użytkowników)"""
     try:
-        opcje_kabli = get_kable_options()
-        return render_template('calculator.html', opcje_kabli=opcje_kabli)
+        # Dodaj timestamp
+        calculation_data['timestamp'] = datetime.now().isoformat()
+        
+        # Debug log
+        logging.info(f"Zapisywanie historii: {calculation_data['nazwa_kabla']} - {calculation_data['dlugosc']}m")
+        
+        if os.path.exists(history_file):
+            with open(history_file, 'r', encoding='utf-8') as f:
+                history = json.load(f)
+        else:
+            history = []
+            logging.info("Tworzenie nowego pliku historii")
+        
+        history.append(calculation_data)
+        
+        # Zachowaj tylko ostatnie 100 obliczeń
+        history = history[-100:]
+        
+        with open(history_file, 'w', encoding='utf-8') as f:
+            json.dump(history, f, ensure_ascii=False, indent=2)
+        
+        logging.info(f"Historia zapisana, łącznie {len(history)} obliczeń")
+            
     except Exception as e:
-        logging.error(f"Błąd na stronie kalkulatora: {e}")
-        flash('Błąd ładowania kalkulatora', 'error')
-        return redirect(url_for('dashboard'))
+        logging.error(f"Błąd zapisywania historii: {e}")
+        # W przypadku błędu, spróbuj zapisać bez indentacji
+        try:
+            with open(history_file, 'w', encoding='utf-8') as f:
+                json.dump([calculation_data], f, ensure_ascii=False)
+            logging.info("Historia zapisana w trybie awaryjnym")
+        except Exception as e2:
+            logging.error(f"Krytyczny błąd zapisywania historii: {e2}")
 
 @app.route('/')
 def index():
-    """Strona główna - przekierowanie do logowania lub dashboard"""
-    if 'nip' in session:
-        return redirect(url_for('dashboard'))
-    return redirect(url_for('login'))
+    try:
+        opcje_kabli = get_kable_options()
+        return render_template('index.html', opcje_kabli=opcje_kabli)
+    except Exception as e:
+        logging.error(f"Błąd na stronie głównej: {e}")
+        return render_template('error.html', error="Błąd ładowania danych")
+
+@app.route('/api/cable-options')
+def api_cable_options():
+    """API endpoint dla opcji kabli"""
+    try:
+        return jsonify(get_kable_options())
+    except Exception as e:
+        logging.error(f"Błąd API cable-options: {e}")
+        return jsonify({"error": "Błąd serwera"}), 500
 
 @app.route('/oblicz', methods=['POST'])
-@login_required
 def oblicz_beben():
-    """Oblicz bęben (tylko dla zalogowanych)"""
     try:
         # Pobranie danych z formularza
         nazwa_kabla = request.form.get('nazwa_kabla', '').strip()
@@ -431,8 +210,9 @@ def oblicz_beben():
         # Walidacja danych
         errors = validate_input_data(nazwa_kabla, liczba_przekroj, dlugosc_kabla)
         if errors:
-            flash(f"Błędy walidacji: {'; '.join(errors)}", 'error')
-            return redirect(url_for('calculator'))
+            return render_template('index.html', 
+                                 wynik=f"Błędy walidacji: {'; '.join(errors)}", 
+                                 opcje_kabli=get_kable_options())
         
         dlugosc_kabla = float(dlugosc_kabla)
         kable_data, bebny_data = load_excel_data()
@@ -446,8 +226,9 @@ def oblicz_beben():
                 break
         
         if not wybrany_kabel:
-            flash("Nie znaleziono kabla o podanych parametrach.", 'error')
-            return redirect(url_for('calculator'))
+            return render_template('index.html', 
+                                 wynik="Nie znaleziono kabla o podanych parametrach.", 
+                                 opcje_kabli=get_kable_options())
         
         # Parametry kabla
         srednica_kabla = wybrany_kabel.get('średnica zewnętrzna kabla', 0) / 10
@@ -463,14 +244,15 @@ def oblicz_beben():
         )
         
         if not odpowiednie_bebny:
-            flash("Nie znaleziono odpowiedniego bębna.", 'error')
-            return redirect(url_for('calculator'))
+            return render_template('index.html', 
+                                 wynik="Nie znaleziono odpowiedniego bębna.", 
+                                 opcje_kabli=get_kable_options())
         
         # Najlepszy bęben (pierwszy z posortowanej listy)
         najlepszy_beben = odpowiednie_bebny[0]
         
-        # Przekaż dane do template
-        return render_template('calculator.html',
+        # Przekaż dane do template jako strukturę (bez zapisywania historii na serwerze)
+        return render_template('index.html',
                              wynik_data={
                                  'nazwa_kabla': nazwa_kabla,
                                  'przekroj': liczba_przekroj,
@@ -479,22 +261,37 @@ def oblicz_beben():
                                  'laczna_masa': najlepszy_beben['suma_wag'],
                                  'szczegoly': najlepszy_beben
                              },
+                             save_to_history={
+                                 'nazwa_kabla': nazwa_kabla,
+                                 'przekroj': liczba_przekroj,
+                                 'dlugosc': dlugosc_kabla,
+                                 'wynik': {
+                                     'beben': {
+                                         'Średnica': najlepszy_beben['beben']['Średnica'],
+                                         'szerokość': najlepszy_beben['beben']['szerokość'],
+                                         'średnica wewnętrzna': najlepszy_beben['beben']['średnica wewnętrzna'],
+                                         'Waga': najlepszy_beben['beben'].get('Waga', 0)
+                                     },
+                                     'masa_kabla': najlepszy_beben['masa_kabla'],
+                                     'masa_bębna': najlepszy_beben['masa_bębna'],
+                                     'suma_wag': najlepszy_beben['suma_wag'],
+                                     'wykorzystanie_procent': najlepszy_beben['wykorzystanie_procent'],
+                                     'liczba_warstw': najlepszy_beben['liczba_warstw']
+                                 }
+                             },
                              opcje_kabli=get_kable_options())
                              
     except Exception as e:
         logging.error(f"Błąd podczas obliczeń: {e}")
-        flash(f"Wystąpił błąd podczas obliczeń: {str(e)}", 'error')
-        return redirect(url_for('calculator'))
+        return render_template('index.html', 
+                             wynik=f"Wystąpił błąd podczas obliczeń: {str(e)}", 
+                             opcje_kabli=get_kable_options())
 
-@app.route('/api/cable-options')
-@login_required
-def api_cable_options():
-    """API endpoint dla opcji kabli (tylko dla zalogowanych)"""
-    try:
-        return jsonify(get_kable_options())
-    except Exception as e:
-        logging.error(f"Błąd API cable-options: {e}")
-        return jsonify({"error": "Błąd serwera"}), 500
+@app.route('/history')
+def history():
+    """Wyświetla historię obliczeń z localStorage"""
+    # Historia będzie ładowana z localStorage po stronie klienta
+    return render_template('history.html')
 
 @app.errorhandler(404)
 def not_found(error):
@@ -503,9 +300,6 @@ def not_found(error):
 @app.errorhandler(500)
 def internal_error(error):
     return render_template('error.html', error="Wewnętrzny błąd serwera"), 500
-
-# Inicializacja przy starcie
-init_mock_data()
 
 # Dla Vercel
 if __name__ == '__main__':
